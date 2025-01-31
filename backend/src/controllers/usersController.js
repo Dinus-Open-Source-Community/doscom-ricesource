@@ -1,7 +1,7 @@
 import { body, validationResult } from 'express-validator';
 import multer from 'multer';
 import argon2 from 'argon2';
-import supabase from '../supabaseClient.js';
+import { supabase } from "../supabaseClient.js";
 
 
 const upload = multer({
