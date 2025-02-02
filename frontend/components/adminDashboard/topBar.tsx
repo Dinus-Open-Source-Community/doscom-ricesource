@@ -17,20 +17,20 @@ export default function TopBar() {
     };
 
     return (
-        <div className="flex items-center gap-4 flex-wrap">
+        <div className="ml-[288px] mt-2 flex items-center gap-4 flex-wrap">
             {/* Search Bar */}
             <div className="mr-auto w-full max-w-sm min-w-[450px]">
-  <div className="max-w-md mx-auto rounded-full">
-    <div className="relative flex items-center">
-      <IoSearch className="absolute w-5 h-5 top-2.5 left-2.5 text-slate-600 transition-colors duration-300 group-hover:text-green-600 group-focus-within:text-green-600" />
-      <input
-        type="text"
-        className="w-full bg-white placeholder:text-slate-400 text-black text-sm rounded-md pl-10 pr-3 py-2 transition duration-300 ease  shadow-sm focus:shadow focus:ring-2 focus:ring-green-600 hover:ring-2 hover:ring-green-600"
-        placeholder="Search"
-      />
-    </div>
-  </div>
-</div>
+                <div className="max-w-md mx-auto rounded-full">
+                    <div className="relative flex items-center">
+                        <IoSearch className="absolute w-5 h-5 top-2.5 left-2.5 text-slate-600 transition-colors duration-300 group-hover:text-green-600 group-focus-within:text-green-600" />
+                        <input
+                            type="text"
+                            className="w-full bg-white placeholder:text-slate-400 text-black text-sm rounded-md pl-10 pr-3 py-2 transition duration-300 ease  shadow-sm focus:shadow focus:ring-2 focus:ring-green-600 hover:ring-2 hover:ring-green-600"
+                            placeholder="Search"
+                        />
+                    </div>
+                </div>
+            </div>
 
 
             {/* Notifications and Theme Toggle */}
