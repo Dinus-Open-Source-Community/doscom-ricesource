@@ -25,7 +25,7 @@ export default function Sidebar() {
                 href="../dashboardAdmin/"
                 aria-label="RiceSource"
               >
-                <img src="Group.svg" className="w-8 h-8" alt="Globe Icon" />
+                <img src="/Group.svg" className="w-8 h-8" alt="Globe Icon" />
                 <span className="ml-2">
                   <span className="text-green-600">Rice</span>
                   <span className="text-green-800">Source</span>
