@@ -1,14 +1,16 @@
 import express from 'express';
-import upload from '../middleware/upload.js';
-import { createConfig, getConfig, getAllConfigs, deleteConfig, updateConfig } from '../controllers/configController.js';
-import cors from 'cors';
-
+import ConfigController from '../controllers/configController.js';
+import multer from 'multer';
 const router = express.Router();
+const upload = multer();
 
 
-router.post('/config', upload.single('image'), createConfig);
-router.put('/config/:id', upload.single('image'), updateConfig);
-router.get('/config/:id', getConfig);
-router.delete('/config/:id', deleteConfig);
-router.get('/config', getAllConfigs);
+
+
+router.get('/configs', ConfigController.getAllConfigs);
+router.get('/configs/:id', ConfigController.getConfigById);
+router.post('/configs', upload.single('image'), ConfigController.createConfig);
+router.put('/configs/:id', upload.single('image'), ConfigController.updateConfig);
+router.delete('/configs/:id', ConfigController.deleteConfig);
+
 export default router;
