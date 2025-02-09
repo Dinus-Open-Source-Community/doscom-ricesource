@@ -1,5 +1,4 @@
 import { notFound } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,6 +11,8 @@ import {
 import LikeButton from "@/components/like-button";
 import CommentSection from "@/components/comment-section";
 import BookmarkButton from "@/components/bookmark-button";
+import { ImageGallery } from "@/components/image-gallery";
+import { Badge } from "@/components/ui/badge";
 import { getRiceById } from "@/actions/rice";
 
 export default async function RiceDetailPage({
@@ -27,45 +28,100 @@ export default async function RiceDetailPage({
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-3xl">{rice.judul}</CardTitle>
-          <p className="text-muted-foreground">
-            {/* by {rice.author} */}
-            by Doscom
-          </p>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <Image
-            src={rice.image_url || "/image/placeholder-card.png"}
-            alt={rice.judul}
-            width={1200}
-            height={675}
-            className="w-full h-auto rounded-lg"
-          />
-          <p>{rice.description}</p>
-          <div className="flex items-center space-x-4">
-            <span className="font-bold">DE:</span>
-            <span>
-              {/* {rice.de} */}
-              GNOME
-            </span>
-          </div>
-
-          {rice.github && (
-            <Link href={rice.github} target="_blank" rel="noopener noreferrer">
-              <Button variant="outline">View on GitHub</Button>
-            </Link>
+      <div className="grid md:grid-cols-2 gap-8 mb-8">
+        <div>
+          {rice.image_url ? (
+            <ImageGallery
+              images={[
+                rice.image_url,
+                "/image/placeholder-card.png",
+                "/image/placeholder-card.png",
+              ]}
+              alt={rice.judul}
+            />
+          ) : (
+            <ImageGallery
+              images={[
+                "/image/placeholder-card.png",
+                "/image/placeholder-card.png",
+                "/image/placeholder-card.png",
+              ]}
+              alt={rice.judul}
+            />
           )}
-          <Link href={"doscom.org"} target="_blank" rel="noopener noreferrer">
-            <Button variant="outline">View on GitHub</Button>
-          </Link>
-        </CardContent>
-        <CardFooter className="flex justify-between items-center">
-          <LikeButton initialLikes={rice.like} riceId={rice.id} />
-          <BookmarkButton riceId={rice.id} />
-        </CardFooter>
-      </Card>
+        </div>
+        <div>
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-3xl">{rice.judul}</CardTitle>
+              <p className="text-muted-foreground">
+                by Doscom
+                {/* {rice.author} */}
+              </p>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p>{rice.description}</p>
+              <div className="flex flex-wrap gap-2">
+                {[1, 2, 3].map((tag, i) => (
+                  <Badge key={i} variant="secondary">
+                    minimalist
+                  </Badge>
+                ))}
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <h3 className="font-semibold">Desktop Environment</h3>
+                  <p>
+                    GNOME
+                    {/* {rice.de} */}
+                  </p>
+                </div>
+                <div>
+                  <h3 className="font-semibold">Distro</h3>
+                  <p>
+                    Ubuntu 22.04
+                    {/* {rice.specs.distro} */}
+                  </p>
+                </div>
+                <div>
+                  <h3 className="font-semibold">Window Manager</h3>
+                  <p>
+                    Mutter
+                    {/* {rice.specs.wm} */}
+                  </p>
+                </div>
+                <div>
+                  <h3 className="font-semibold">Terminal</h3>
+                  <p>
+                    GNOME Terminal
+                    {/* {rice.specs.terminal} */}
+                  </p>
+                </div>
+                <div>
+                  <h3 className="font-semibold">Shell</h3>
+                  <p>
+                    zsh
+                    {/* {rice.specs.shell} */}
+                  </p>
+                </div>
+              </div>
+              <Link
+                href={rice.github ? rice.github : ""}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Button variant="outline" className="w-full">
+                  View on GitHub
+                </Button>
+              </Link>
+            </CardContent>
+            <CardFooter className="flex justify-between items-center">
+              <LikeButton initialLikes={rice.like} riceId={rice.id} />
+              <BookmarkButton riceId={rice.id} />
+            </CardFooter>
+          </Card>
+        </div>
+      </div>
       <CommentSection riceId={rice.id} />
     </div>
   );
