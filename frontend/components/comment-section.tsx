@@ -37,10 +37,11 @@ export default function CommentSection({ riceId }: CommentSectionProps) {
       setError(null);
       try {
         const response = await getCommentByRiceId(riceId.toString());
-
+        console.log(response);
         setComments(response);
       } catch (err) {
         setError("Comments could not be loaded");
+        console.log("Error loading comments:", err);
       } finally {
         setIsLoading(false);
       }
@@ -150,7 +151,7 @@ export default function CommentSection({ riceId }: CommentSectionProps) {
         <Button type="submit">Post Comment</Button>
       </form>
       <div className="space-y-4">
-        {comments.length > 0 ? (
+        {comments && comments.length > 0 ? (
           renderComments()
         ) : (
           <p>No comments yet. Be the first to comment!</p>
