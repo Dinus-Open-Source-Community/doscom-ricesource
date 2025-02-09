@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import {
   Card,
   CardContent,
@@ -5,58 +8,61 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Rice } from "@/types";
-import { getAllRices } from "@/actions/rice";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 import LikeButton from "./like-button";
 import CardBookmarkButton from "./card-bookmark-button";
+import Search from "./search";
+import Sort from "./sort";
+import { Rice } from "@/types";
 
-// This is a mock function. In a real application, you'd fetch this data from an API or database.
-async function getRices(search: string, sort: string, page: number) {
-  const rices = await getAllRices();
-  // Filter by search term
-  const filtered = rices.filter(
-    (rice: Rice) =>
-      rice.judul.toLowerCase().includes(search.toLowerCase()) ||
-      rice.description.toLowerCase().includes(search.toLowerCase())
-  );
-
-  // Sort
-  const sorted = filtered.sort((a: Rice, b: Rice) => {
-    if (sort === "oldest") return a.id - b.id;
-    if (sort === "most_liked") return b.like_up - a.like_up;
-    return b.id - a.id;
-  });
-
-  // Paginate
-  const perPage = 4;
-  const start = (page - 1) * perPage;
-  const end = start + perPage;
-  const paginated = sorted.slice(start, end);
-
-  return {
-    rices: paginated,
-    totalPages: Math.ceil(sorted.length / perPage),
-  };
+interface RiceListProps {
+  initialRices: Rice[];
 }
 
-export default async function RiceList({
-  search,
-  sort,
-  page,
-}: {
-  search: string;
-  sort: string;
-  page: number;
-}) {
-  const { rices, totalPages } = await getRices(search, sort, page);
+export default function RiceList({ initialRices }: RiceListProps) {
+  const [rices, setRices] = useState(initialRices);
+  const [search, setSearch] = useState("");
+  const [sort, setSort] = useState("newest");
+  const [page, setPage] = useState(1);
+  const perPage = 4;
+
+  const filteredRices = rices
+    .filter(
+      (rice) => rice.judul.toLowerCase().includes(search.toLowerCase())
+      // || rice.de.toLowerCase().includes(search.toLowerCase())
+    )
+    .sort((a, b) => {
+      if (sort === "oldest") return a.id - b.id;
+      if (sort === "most_liked") return b.like - a.like;
+      return b.id - a.id;
+    });
+
+  const paginatedRices = filteredRices.slice(
+    (page - 1) * perPage,
+    page * perPage
+  );
+  const totalPages = Math.ceil(filteredRices.length / perPage);
+
+  const handleSearch = (value: string) => {
+    setSearch(value);
+    setPage(1);
+  };
+
+  const handleSort = (value: string) => {
+    setSort(value);
+    setPage(1);
+  };
 
   return (
     <div>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-2">
+        <Search onSearch={handleSearch} />
+        <Sort onSort={handleSort} />
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        {rices.map((rice: Rice) => (
+        {paginatedRices.map((rice) => (
           <Card key={rice.id}>
             <CardHeader>
               <CardTitle>{rice.judul}</CardTitle>
@@ -75,15 +81,15 @@ export default async function RiceList({
                 <div>
                   <p className="text-sm text-muted-foreground">
                     By Doscom
-                    {/* By {rice.author} */}
+                    {/* {rice.author} */}
                   </p>
                   <p className="text-sm text-muted-foreground">
+                    DE : Gnome
                     {/* {rice.de} */}
-                    GNOME
                   </p>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <LikeButton initialLikes={rice.like_up} riceId={rice.id} />
+                  <LikeButton initialLikes={rice.like} riceId={rice.id} />
                   <CardBookmarkButton riceId={rice.id} />
                 </div>
               </div>
@@ -98,14 +104,13 @@ export default async function RiceList({
       </div>
       <div className="flex justify-center space-x-2">
         {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
-          <Link
+          <Button
             key={pageNum}
-            href={`/?search=${search}&sort=${sort}&page=${pageNum}`}
+            variant={pageNum === page ? "default" : "outline"}
+            onClick={() => setPage(pageNum)}
           >
-            <Button variant={pageNum === page ? "default" : "outline"}>
-              {pageNum}
-            </Button>
-          </Link>
+            {pageNum}
+          </Button>
         ))}
       </div>
     </div>
