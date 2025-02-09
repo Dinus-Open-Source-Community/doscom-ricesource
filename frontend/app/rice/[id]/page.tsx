@@ -52,15 +52,17 @@ export default async function RiceDetailPage({
             </span>
           </div>
 
-          {/* <Link href={rice.gitLink} target="_blank" rel="noopener noreferrer">
-            <Button variant="outline">View on GitHub</Button>
-          </Link> */}
+          {rice.github && (
+            <Link href={rice.github} target="_blank" rel="noopener noreferrer">
+              <Button variant="outline">View on GitHub</Button>
+            </Link>
+          )}
           <Link href={"doscom.org"} target="_blank" rel="noopener noreferrer">
             <Button variant="outline">View on GitHub</Button>
           </Link>
         </CardContent>
         <CardFooter className="flex justify-between items-center">
-          <LikeButton initialLikes={rice.like_up} riceId={rice.id} />
+          <LikeButton initialLikes={rice.like} riceId={rice.id} />
           <BookmarkButton riceId={rice.id} />
         </CardFooter>
       </Card>
