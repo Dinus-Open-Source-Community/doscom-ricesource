@@ -20,7 +20,8 @@ export default async function RiceDetailPage({
 }: {
   params: { id: string };
 }) {
-  const rice = await getRiceById(params.id);
+  const { id } = await params;
+  const rice = await getRiceById(id);
 
   if (!rice) {
     notFound();
