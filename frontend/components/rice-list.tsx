@@ -93,7 +93,7 @@ export default function RiceList({ initialRices }: RiceListProps) {
                   <CardBookmarkButton riceId={rice.id} />
                 </div>
               </div>
-              <Link href={`/rice/${rice.id}`} className="w-full">
+              <Link href={`/ricesource/rice/${rice.id}`} className="w-full">
                 <Button variant="outline" className="w-full">
                   View
                 </Button>
