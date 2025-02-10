@@ -5,7 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Comment } from "./comment";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getCommentByRiceId } from "@/actions/comment";
+import {
+  getCommentByRiceId,
+  postComment,
+  replyComment,
+} from "@/actions/comment";
 
 interface User {
   avatar: string;
@@ -30,75 +34,68 @@ export default function CommentSection({ riceId }: CommentSectionProps) {
   const [newComment, setNewComment] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isPosting, setIsPosting] = useState(false);
+
+  const fetchComments = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await getCommentByRiceId(riceId.toString());
+      setComments(response);
+    } catch (err) {
+      setError("Comments could not be loaded");
+      console.log("Error loading comments:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchComments = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        const response = await getCommentByRiceId(riceId.toString());
-
-        setComments(response);
-      } catch (err) {
-        setError("Comments could not be loaded");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchComments();
   }, [riceId]);
 
   const handleSubmitComment = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsPosting(true);
     if (newComment.trim()) {
       try {
-        const response = await fetch("/api/comments", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            riceId,
-            description: newComment,
-            parent_id: null,
-          }),
+        const response = await postComment({
+          config_id: riceId,
+          description: newComment,
+          id_user: 14,
         });
 
-        if (!response.ok) {
+        if (!response) {
           throw new Error("Failed to post comment");
         }
 
-        const newCommentData = await response.json();
-        setComments([...comments, newCommentData]);
+        setComments([...comments, response]);
+        fetchComments();
         setNewComment("");
       } catch (err) {
         console.error("Error posting comment:", err);
         // You might want to show an error message to the user here
+      } finally {
+        setIsPosting(false);
       }
     }
   };
 
   const handleReply = async (parentId: number, content: string) => {
     try {
-      const response = await fetch("/api/comments", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          riceId,
-          description: content,
-          parent_id: parentId,
-        }),
+      const response = await replyComment({
+        config_id: riceId,
+        description: content,
+        id_user: 14,
+        parent_id: parentId,
       });
 
-      if (!response.ok) {
+      if (!response) {
         throw new Error("Failed to post reply");
       }
 
-      const newReplyData = await response.json();
-      setComments([...comments, newReplyData]);
+      setComments([...comments, response]);
+      fetchComments();
     } catch (err) {
       console.error("Error posting reply:", err);
       // You might want to show an error message to the user here
@@ -147,10 +144,12 @@ export default function CommentSection({ riceId }: CommentSectionProps) {
           placeholder="Add a comment..."
           className="mb-2"
         />
-        <Button type="submit">Post Comment</Button>
+        <Button type="submit" disabled={isPosting}>
+          {isPosting ? "Posting..." : "Post Comment"}
+        </Button>
       </form>
       <div className="space-y-4">
-        {comments.length > 0 ? (
+        {comments && comments.length > 0 ? (
           renderComments()
         ) : (
           <p>No comments yet. Be the first to comment!</p>

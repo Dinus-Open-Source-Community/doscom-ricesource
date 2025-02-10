@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import {
   Select,
   SelectContent,
@@ -9,15 +8,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export default function Sort() {
-  const router = useRouter();
+interface SortProps {
+  onSort: (value: string) => void;
+}
 
-  const handleSort = (value: string) => {
-    router.push(`/?sort=${value}`);
-  };
-
+export default function Sort({ onSort }: SortProps) {
   return (
-    <Select onValueChange={handleSort}>
+    <Select onValueChange={onSort}>
       <SelectTrigger className="w-[180px]">
         <SelectValue placeholder="Sort by" />
       </SelectTrigger>
