@@ -1,4 +1,4 @@
-import supabase from '../supabaseClient.js';
+import { supabase } from "../supabaseClient.js";
 
 export const createKomentar = async(req, res) => {
     const { config_id, description, parent_id, id_user } = req.body;

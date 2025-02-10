@@ -1,239 +1,177 @@
-import supabase from '../supabaseClient.js';
-import path from 'path';
-import fs from 'fs';
+import { supabase } from "../supabaseClient.js";
+import multer from 'multer';
+const upload = multer();
 
+class ConfigController {
+    async getAllConfigs(req, res) {
+        try {
+            const { data, error } = await supabase
+                .from('config')
+                .select('*');
 
+            if (error) throw error;
 
-export const createConfig = async(req, res) => {
-    const { judul, description, like_up, like_down } = req.body;
-    const imageFile = req.file;
-
-
-    console.log('cek file:', imageFile);
-
-    if (!judul || !description || like_up === undefined || like_down === undefined) {
-        return res.status(400).json({
-            status: 'error',
-            message: 'Missing required fields',
-        });
+            res.status(200).json({ success: true, data });
+        } catch (error) {
+            res.status(500).json({ success: false, message: error.message });
+        }
     }
 
-    let image = null;
-    
-    if (imageFile) {
-        console.log('Uploading file:', imageFile);
+    async getConfigById(req, res) {
+        const { id } = req.params;
 
-        
-        const filePath = path.join('image', imageFile.filename);
-        console.log('file path', filePath);
-        const { data, error: uploadError } = await supabase
-            .storage
-            .from('images')
-            .upload(filePath, fs.createReadStream(imageFile.path), {
-                cacheControl: '3600',
-                upsert: true,
-                duplex: 'half'
-            });
+        try {
+            const { data, error } = await supabase
+                .from('config')
+                .select('*')
+                .eq('id', id)
+                .single();
 
-        if (uploadError) {
-            console.error('Error uploading file:', uploadError.message);
-            return res.status(500).json({
-                status: 'error',
-                message: 'Error uploading image to storage',
-                error: uploadError.message,
+            if (error) throw error;
+
+            res.status(200).json({ success: true, data });
+        } catch (error) {
+            res.status(500).json({ success: false, message: error.message });
+        }
+    }
+
+    async createConfig(req, res) {
+        const { judul, description, like, github } = req.body;
+        const image = req.file;
+
+        // Validasi kolom wajib
+        if (!judul || !description) {
+            return res.status(400).json({
+                success: false,
+                message: 'Kolom judul dan description wajib diisi.'
             });
         }
 
-
-        const { publicURL, error: urlError } = supabase
-            .storage
-            .from('images')
-            .getPublicUrl(filePath);
-
-        if (urlError) {
-            console.error('Error getting public URL:', urlError.message); // Log error URL
-            return res.status(500).json({
-                status: 'error',
-                message: 'Error getting public URL for image',
-                error: urlError.message,
+        // Validasi link GitHub (opsional)
+        if (github && !/^https?:\/\/(www\.)?github\.com\/[\w-]+\/[\w-]+$/.test(github)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Link GitHub tidak valid.'
             });
         }
 
-        console.log('publik URL: ', publicURL);
-        image = publicURL;
-    }
+        try {
+            let imageUrl = null;
 
-    console.log("publik key diluar if: ", image)
-   const { data, error } = await supabase
-        .from('config')
-        .insert([{ judul, description, like_up, like_down, image }]); 
+            if (image) {
+                const { data, error: uploadError } = await supabase.storage
+                    .from('images')
+                    .upload(`config/${Date.now()}_${image.originalname}`, image.buffer);
 
-    if (error) {
-        console.error('Error creating config:', error.message); // Log error insert
-        return res.status(500).json({
-            status: 'error',
-            message: 'Error creating config',
-            error: error.message,
-        });
-    }
+                console.log('Upload result:', data, uploadError);
 
-    return res.status(201).json({
-        status: 'ok',
-        message: 'Config created successfully',
-        data,
-    });
-};
+                if (uploadError) throw uploadError;
 
-export const updateConfig = async(req, res) => {
-    const { id } = req.params;
-    const { judul, description, like_up, like_down } = req.body;
-    const imageFile = req.file; // Assuming you are using multer for file uploads
+                console.log('File Path:', data.path);
 
-    if (!judul || !description || like_up === undefined || like_down === undefined) {
-        return res.status(400).json({
-            status: 'error',
-            message: 'Missing required fields',
-        });
-    }
+                const { publicURL, error: urlError } = supabase.storage
+                    .from('images')
+                    .getPublicUrl(data.path);
 
+                if (urlError || !publicURL) {
+                    const supabaseUrl = 'https://qckcobphtiuerzftgnot.supabase.co';
+                    imageUrl = `${supabaseUrl}/storage/v1/object/public/images/${data.path}`;
+                } else {
+                    imageUrl = publicURL;
+                }
 
-    let image = null;
-    if (imageFile) {
+                console.log('Final Public URL:', imageUrl);
+            }
 
-        const filePath = path.join('images', imageFile.filename);
-        const { data, error: uploadError } = await supabase
-            .storage
-            .from('images')
-            .upload(filePath, fs.createReadStream(imageFile.path), {
-                cacheControl: '3600',
-                upsert: false,
-            });
+            const likeValue = like || 0;
 
-        if (uploadError) {
-            return res.status(500).json({
-                status: 'error',
-                message: 'Error uploading image to storage',
-                error: uploadError.message,
-            });
+            const { data, error } = await supabase
+                .from('config')
+                .insert([{ judul, description, image_url: imageUrl, like: likeValue, github }])
+                .single();
+
+            if (error) throw error;
+
+            res.status(201).json({ success: true, data });
+        } catch (error) {
+            console.error('Error:', error.message);
+            res.status(500).json({ success: false, message: error.message });
         }
+    }
 
+    async updateConfig(req, res) {
+        const { id } = req.params;
+        const { judul, description, like, github } = req.body;
+        const image = req.file;
 
-        const { publicURL, error: urlError } = supabase
-            .storage
-            .from('images')
-            .getPublicUrl(filePath);
+        try {
+            let imageUrl = null;
 
-        if (urlError) {
-            return res.status(500).json({
-                status: 'error',
-                message: 'Error getting public URL for image',
-                error: urlError.message,
-            });
+            if (image) {
+                const { data, error: uploadError } = await supabase.storage
+                    .from('images')
+                    .upload(`config/${Date.now()}_${image.originalname}`, image.buffer);
+
+                console.log('Upload result:', data, uploadError);
+
+                if (uploadError) throw uploadError;
+
+                const { publicURL, error: urlError } = supabase.storage
+                    .from('images')
+                    .getPublicUrl(data.path);
+
+                if (urlError || !publicURL) {
+                    const supabaseUrl = 'https://qckcobphtiuerzftgnot.supabase.co';
+                    imageUrl = `${supabaseUrl}/storage/v1/object/public/images/${data.path}`;
+                } else {
+                    imageUrl = publicURL;
+                }
+
+                console.log('Final Public URL:', imageUrl);
+            }
+
+            const updateData = {
+                judul,
+                description,
+                like,
+                github,
+            };
+
+            if (imageUrl) {
+                updateData.image_url = imageUrl;
+            }
+
+            const { data, error } = await supabase
+                .from('config')
+                .update(updateData)
+                .eq('id', id)
+                .single();
+
+            if (error) throw error;
+
+            res.status(200).json({ success: true, data });
+        } catch (error) {
+            console.error('Error:', error.message);
+            res.status(500).json({ success: false, message: error.message });
         }
-
-        image = publicURL;
     }
 
+    async deleteConfig(req, res) {
+        const { id } = req.params;
 
-    const { data, error } = await supabase
-        .from('config')
-        .update({ judul, description, like_up, like_down, image_url: image })
-        .eq('id', id);
+        try {
+            const { data, error } = await supabase
+                .from('config')
+                .delete()
+                .eq('id', id);
 
-    if (error) {
-        return res.status(500).json({
-            status: 'error',
-            message: 'Error updating config',
-            error: error.message,
-        });
+            if (error) throw error;
+
+            res.status(200).json({ success: true, message: 'Config deleted successfully', data });
+        } catch (error) {
+            res.status(500).json({ success: false, message: error.message });
+        }
     }
+}
 
-    if (data.length === 0) {
-        return res.status(404).json({
-            status: 'error',
-            message: 'Config not found for update',
-        });
-    }
-
-    return res.status(200).json({
-        status: 'ok',
-        message: 'Config updated successfully',
-        data,
-    });
-};
-
-
-export const deleteConfig = async(req, res) => {
-    const { id } = req.params;
-
-    const { data, error } = await supabase
-        .from('config')
-        .delete()
-        .eq('id', id);
-
-    if (error) {
-        return res.status(500).json({
-            status: 'error',
-            message: 'Error deleting config',
-            error: error.message,
-        });
-    }
-
-    if (data.length === 0) {
-        return res.status(404).json({
-            status: 'error',
-            message: 'Config not found for deletion',
-        });
-    }
-
-    return res.status(200).json({
-        status: 'ok',
-        message: 'Config deleted successfully',
-        data,
-    });
-};
-
-
-export const getConfig = async(req, res) => {
-    const { id } = req.params;
-
-    const { data, error } = await supabase
-        .from('config')
-        .select('*')
-        .eq('id', id)
-        .single();
-
-    if (error) {
-        return res.status(404).json({
-            status: 'error',
-            message: 'Config not found',
-            error: error.message,
-        });
-    }
-
-    return res.status(200).json({
-        status: 'ok',
-        message: 'Config retrieved successfully',
-        data,
-    });
-};
-
-export const getAllConfigs = async(req, res) => {
-    const { data, error } = await supabase
-        .from('config')
-        .select('*'); // Mengambil semua data dari tabel config
-
-    if (error) {
-        return res.status(500).json({
-            status: 'error',
-            message: 'Error retrieving configs',
-            error: error.message,
-        });
-    }
-
-    return res.status(200).json({
-        status: 'ok',
-        message: 'Configs retrieved successfully',
-        data,
-    });
-};
+export default new ConfigController();

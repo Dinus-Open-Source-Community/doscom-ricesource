@@ -1,143 +1,205 @@
-import supabase from "../supabaseClient.js";
-import argon2 from "argon2";
+import { body, validationResult } from 'express-validator';
+import multer from 'multer';
+import argon2 from 'argon2';
+import { supabase } from "../supabaseClient.js";
 
-async function hashedPassword(password) {
-    try {
-        const hash = await argon2.hash(password, {
-            type: argon2.argon2id,
-            memoryCost: 2 ** 16,
-            timeCost: 3,
-            parallelism: 2,
+
+const upload = multer({
+    limits: { fileSize: 1 * 1024 * 1024 }, 
+    fileFilter: (req, file, cb) => {
+        if (!file.mimetype.startsWith('image/')) {
+            return cb(new Error('Only image files are allowed!'), false);
+        }
+        cb(null, true);
+    },
+});
+
+
+const handleValidationErrors = (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({
+            status: 'error',
+            message: 'Validation failed',
+            errors: errors.array(),
         });
-        return hash;
-    } catch (error) {
-        console.error('Error saat hashing password:', error);
-        throw error;
     }
-}
+    next();
+};
+
+// Handle file upload and retrieve public URL
+const uploadAvatar = async(file) => {
+    const { buffer, originalname } = file;
+    const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(`avatars/${Date.now()}_${originalname}`, buffer);
+
+    if (uploadError) throw uploadError;
+
+    return `https://qckcobphtiuerzftgnot.supabase.co/storage/v1/object/public/avatars/${uploadData.path}`;
+};
+
 
 export const createUser = async(req, res) => {
-    const { username, email, password } = req.body;
-
-
-    if (!username || !email || !password) {
-        return res.status(400).json({ message: 'Username, email, and password are required.' });
-    }
-
-    try {
-        const { data: authData, error: authError } = await supabase.auth.signUp({
-            email, 
-            password,
-        });
-        
-        if(authError){
-            return res.status(400).json({
-                status: 'error bos',
-                message: 'gagal membuat akun supabase auth', 
-                error: authError.message,
-            });
+    upload.single('avatar')(req, res, async(err) => {
+        if (err) {
+            return res.status(400).json({ status: 'error', message: err.message });
         }
 
-        if(!authData.user){
-            return res.status(400).json({
-                message: 'email mu di konfir sek mas'
+        const { username, email, password } = req.body;
+        let avatarUrl = null;
+
+        try {
+            if (req.file) {
+                avatarUrl = await uploadAvatar(req.file);
+            }
+
+            const hashedPassword = await argon2.hash(password);
+
+            const { data, error } = await supabase
+                .from('users')
+                .insert([{
+                    username,
+                    email,
+                    password: hashedPassword,
+                    avatar: avatarUrl,
+                    is_active: true,
+                    created_at: new Date(),
+                }, ])
+                .single();
+
+            if (error) throw error;
+
+            res.status(201).json({
+                status: 'success',
+                message: 'User created successfully',
+                data,
             });
-        }
-        const userID = authData.user.id;
-        const hashedPass = await hashedPassword(password);
-        const { data, error} = await supabase.from('users').insert([{id: userID, username, email, password: hashedPass, role: 'user'}])
-
-
-        if (error) {
-            return res.status(500).json({
-                status: 'error raws',
-                message: 'Coba Lagi wkwkwk',
+        } catch (error) {
+            res.status(500).json({
+                status: 'error',
+                message: 'Error creating user',
                 error: error.message,
             });
         }
-        return res.status(201).json({
-            status: 'ACC BOLO',
-            message: 'User created successfully A1',
-            authData,
-        });            
-    }
-    catch(error){
+    });
+};
+
+
+export const updateUserById = async(req, res) => {
+    upload.single('avatar')(req, res, async(err) => {
+        if (err) {
+            return res.status(400).json({ status: 'error', message: err.message });
+        }
+
+        const { id } = req.params;
+        const { username, email, password, is_active } = req.body;
+        let updatedFields = { username, email, is_active };
+
+        try {
+            if (req.file) {
+                updatedFields.avatar = await uploadAvatar(req.file);
+            }
+
+            if (password) {
+                updatedFields.password = await argon2.hash(password);
+            }
+
+            const { data, error } = await supabase
+                .from('users')
+                .update(updatedFields)
+                .eq('id', id)
+                .single();
+
+            if (error) throw error;
+
+            res.status(200).json({
+                status: 'success',
+                message: 'User updated successfully',
+                data,
+            });
+        } catch (error) {
+            res.status(500).json({
+                status: 'error',
+                message: 'Error updating user',
+                error: error.message,
+            });
+        }
+    });
+};
+
+
+export const getAllUsers = async(req, res) => {
+    try {
+        const { data, error } = await supabase
+            .from('users')
+            .select('id, username, email, is_active, created_at, avatar');
+
+        if (error) throw error;
+
+        res.status(200).json({
+            status: 'success',
+            message: 'Users retrieved successfully',
+            data,
+        });
+    } catch (error) {
         res.status(500).json({
-           message: 'an error happend hehe'
-        })
+            status: 'error',
+            message: 'Error retrieving users',
+            error: error.message,
+        });
     }
 };
+
 
 export const getUserById = async(req, res) => {
     const { id } = req.params;
 
-    const { data, error } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', id)
-        .single();
+    try {
+        const { data, error } = await supabase
+            .from('users')
+            .select('id, username, email, is_active, created_at, avatar')
+            .eq('id', id)
+            .single();
 
-    if (error) {
-        return res.status(404).json({
-            status: 'error rawr',
-            message: 'User ngilang rak ketemu',
-            error: error.message,
+        if (error) throw error;
+
+        res.status(200).json({
+            status: 'success',
+            message: 'User retrieved successfully',
+            data,
         });
-    }
-
-    return res.status(200).json({
-        status: 'ACC BOLO',
-        message: 'User retrieved successfully A1',
-        data,
-    });
-};
-
-
-export const updateUser = async(req, res) => {
-    const { id } = req.params;
-    const { username, email } = req.body;
-
-    const { data, error } = await supabase
-        .from('users')
-        .update({ username, email })
-        .match({ id });
-
-    if (error) {
-        return res.status(500).json({
+    } catch (error) {
+        res.status(404).json({
             status: 'error',
-            message: 'Error updating user hahaha',
+            message: 'User not found',
             error: error.message,
         });
     }
-
-    return res.status(200).json({
-        status: 'Acc Bolo',
-        message: 'User updated successfully cihuy',
-        data,
-    });
 };
 
 
-export const deleteUser = async(req, res) => {
+export const deleteUserById = async(req, res) => {
     const { id } = req.params;
 
-    const { data, error } = await supabase
-        .from('users')
-        .delete()
-        .match({ id });
+    try {
+        const { data, error } = await supabase
+            .from('users')
+            .delete()
+            .eq('id', id);
 
-    if (error) {
-        return res.status(500).json({
+        if (error) throw error;
+
+        res.status(200).json({
+            status: 'success',
+            message: 'User deleted successfully',
+            data,
+        });
+    } catch (error) {
+        res.status(500).json({
             status: 'error',
             message: 'Error deleting user',
             error: error.message,
         });
     }
-
-    return res.status(200).json({
-        status: 'ACC BOLO',
-        message: 'User deleted successfully A1',
-        data,
-    });
 };
-
