@@ -62,45 +62,61 @@ export default function RiceList({ initialRices }: RiceListProps) {
         <Sort onSort={handleSort} />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        {paginatedRices.map((rice) => (
-          <Card key={rice.id}>
-            <CardHeader>
-              <CardTitle>{rice.judul}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Image
-                src={rice.image_url || "/image/placeholder-card.png"}
-                alt={rice.judul}
-                width={300}
-                height={200}
-                className="w-full h-40 object-cover rounded-md"
-              />
-            </CardContent>
-            <CardFooter className="flex flex-col items-start space-y-2">
-              <div className="flex justify-between items-center w-full">
-                <div>
-                  <p className="text-sm text-muted-foreground">
-                    By Doscom
-                    {/* {rice.author} */}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    DE : Gnome
-                    {/* {rice.de} */}
-                  </p>
+        {paginatedRices.map((rice) => {
+          // Ensure image_url is properly parsed
+          const images: string[] =
+            typeof rice.image_url === "string"
+              ? JSON.parse(rice.image_url)
+              : rice.image_url;
+
+          return (
+            <Card key={rice.id}>
+              <CardHeader>
+                <CardTitle>{rice.judul}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {Array.isArray(images) && images.length > 0 ? (
+                  <Image
+                    src={images[0]} // Show only the first image
+                    alt={rice.judul}
+                    width={300}
+                    height={200}
+                    className="w-full h-40 object-cover rounded-md"
+                  />
+                ) : (
+                  <Image
+                    src="/image/placeholder-card.png"
+                    alt={rice.judul}
+                    width={300}
+                    height={200}
+                    className="w-full h-40 object-cover rounded-md"
+                  />
+                )}
+              </CardContent>
+              <CardFooter className="flex flex-col items-start space-y-2">
+                <div className="flex justify-between items-center w-full">
+                  <div>
+                    <p className="text-sm text-muted-foreground">
+                      By {rice.author || "Anonymous"}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      DE : {rice.desktop_environment || "Unknown"}
+                    </p>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <LikeButton initialLikes={rice.like} riceId={rice.id} />
+                    <CardBookmarkButton riceId={rice.id} />
+                  </div>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <LikeButton initialLikes={rice.like} riceId={rice.id} />
-                  <CardBookmarkButton riceId={rice.id} />
-                </div>
-              </div>
-              <Link href={`/ricesource/rice/${rice.id}`} className="w-full">
-                <Button variant="outline" className="w-full">
-                  View
-                </Button>
-              </Link>
-            </CardFooter>
-          </Card>
-        ))}
+                <Link href={`/ricesource/rice/${rice.id}`} className="w-full">
+                  <Button variant="outline" className="w-full">
+                    View
+                  </Button>
+                </Link>
+              </CardFooter>
+            </Card>
+          );
+        })}
       </div>
       <div className="flex justify-center space-x-2">
         {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
