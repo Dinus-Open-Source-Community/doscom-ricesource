@@ -12,7 +12,6 @@ import LikeButton from "@/components/like-button";
 import CommentSection from "@/components/comment-section";
 import BookmarkButton from "@/components/bookmark-button";
 import { ImageGallery } from "@/components/image-gallery";
-import { Badge } from "@/components/ui/badge";
 import { getRiceById } from "@/actions/rice";
 
 export default async function RiceDetailPage({
@@ -30,91 +29,80 @@ export default async function RiceDetailPage({
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="grid md:grid-cols-2 gap-8 mb-8">
+        {/* Image Section */}
         <div>
-          {rice.image_url ? (
-            <ImageGallery
-              images={[
-                rice.image_url,
-                "/image/placeholder-card.png",
-                "/image/placeholder-card.png",
-              ]}
-              alt={rice.judul}
-            />
-          ) : (
-            <ImageGallery
-              images={[
-                "/image/placeholder-card.png",
-                "/image/placeholder-card.png",
-                "/image/placeholder-card.png",
-              ]}
-              alt={rice.judul}
-            />
-          )}
+          {(() => {
+            // Parse image_url if it's a string
+            let images: string[] = [];
+            if (typeof rice.image_url === "string") {
+              try {
+                images = JSON.parse(rice.image_url);
+              } catch {
+                images = [];
+              }
+            } else if (Array.isArray(rice.image_url)) {
+              images = rice.image_url;
+            }
+
+            return (
+              <ImageGallery
+                images={
+                  images.length > 0 ? images : ["/image/placeholder-card.png"]
+                }
+                alt={rice.judul}
+              />
+            );
+          })()}
         </div>
+
+        {/* Info Section */}
         <div>
           <Card>
             <CardHeader>
               <CardTitle className="text-3xl">{rice.judul}</CardTitle>
               <p className="text-muted-foreground">
-                by Doscom
-                {/* {rice.author} */}
+                by {rice.author ? rice.author : "Doscom"}
               </p>
             </CardHeader>
             <CardContent className="space-y-4">
               <p>{rice.description}</p>
-              <div className="flex flex-wrap gap-2">
-                {[1, 2, 3].map((tag, i) => (
-                  <Badge key={i} variant="secondary">
-                    minimalist
-                  </Badge>
-                ))}
-              </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <h3 className="font-semibold">Desktop Environment</h3>
-                  <p>
-                    GNOME
-                    {/* {rice.de} */}
-                  </p>
+                  <p>{rice.desktop_environment ?? "Unknown"}</p>
                 </div>
                 <div>
                   <h3 className="font-semibold">Distro</h3>
-                  <p>
-                    Ubuntu 22.04
-                    {/* {rice.specs.distro} */}
-                  </p>
+                  <p>{rice.distro ?? "Unknown"}</p>
                 </div>
                 <div>
                   <h3 className="font-semibold">Window Manager</h3>
-                  <p>
-                    Mutter
-                    {/* {rice.specs.wm} */}
-                  </p>
+                  <p>{rice.windows_manager ?? "Unknown"}</p>
                 </div>
                 <div>
                   <h3 className="font-semibold">Terminal</h3>
-                  <p>
-                    GNOME Terminal
-                    {/* {rice.specs.terminal} */}
-                  </p>
+                  <p>{rice.terminal ?? "Unknown"}</p>
                 </div>
                 <div>
                   <h3 className="font-semibold">Shell</h3>
-                  <p>
-                    zsh
-                    {/* {rice.specs.shell} */}
-                  </p>
+                  <p>{rice.shell ?? "Unknown"}</p>
                 </div>
               </div>
-              <Link
-                href={rice.github ? rice.github : ""}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Button variant="outline" className="w-full">
-                  View on GitHub
+              {rice.github ? (
+                <Link
+                  href={rice.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Button variant="outline" className="w-full">
+                    View on GitHub
+                  </Button>
+                </Link>
+              ) : (
+                <Button variant="outline" className="w-full" disabled>
+                  No GitHub Link
                 </Button>
-              </Link>
+              )}
             </CardContent>
             <CardFooter className="flex justify-between items-center">
               <LikeButton initialLikes={rice.like} riceId={rice.id} />
@@ -123,6 +111,8 @@ export default async function RiceDetailPage({
           </Card>
         </div>
       </div>
+
+      {/* Comment Section */}
       <CommentSection riceId={rice.id} />
     </div>
   );
