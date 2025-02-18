@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { BiLogOutCircle } from "react-icons/bi";
 import { FaRegUser } from "react-icons/fa6";
+import { RiAdminLine } from "react-icons/ri";
 
 export default function Sidebar() {
   const [expanded, setExpanded] = useState(true);
@@ -78,10 +79,20 @@ export default function Sidebar() {
 
                 <li>
                   <Link
+                    href="../dashboardAdmin/userAdmin"
+                    className="flex items-center gap-x-3 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-green-100 focus:bg-green-300"
+                  >
+                  <RiAdminLine className="size-4" />
+                    User admin
+                  </Link>
+                </li>
+
+                <li>
+                  <Link
                     href="../dashboardAdmin/users"
                     className="flex items-center gap-x-3 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-green-100 focus:bg-green-300"
                   >
-                    <FaRegUser className="w-[17px] h-[17px]" />
+                    <FaRegUser className="size-4" />
                     User
                   </Link>
                 </li>
@@ -102,7 +113,7 @@ export default function Sidebar() {
 
                 <li>
                   <a className="flex items-center gap-x-3 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-red-500 hover:text-white focus:bg-red-800" href="#">
-                    <BiLogOutCircle className="w-[17px] h-[17px]" />
+                    <BiLogOutCircle className="size-4 w-[17px] h-[17px]" />
                     Logout
                   </a>
                 </li>

@@ -1,11 +1,40 @@
 "use client";
 
 import React, { useState } from "react";
-import { useRouter } from 'next/navigation'
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const router = useRouter();
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+  
+      const data = await response.json();
+      if (!response.ok) {
+        setError(data.error || "Login failed");
+        return;
+      }
+  
+      localStorage.setItem("token", data.token);
+      router.push("/dashboardAdmin");
+    } catch (err) {
+      setError("Something went wrong. Please try again.");
+    }
+  };
+  
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
@@ -25,7 +54,8 @@ export default function LoginPage() {
             <h1 className="text-xl font-bold leading-tight tracking-tight text-black md:text-2xl dark:text-black mb-6 text-center whitespace-nowrap">
               Sign in to your account
             </h1>
-            <form className="space-y-4">
+            {error && <p className="text-red-500">{error}</p>}
+            <form className="space-y-4" onSubmit={handleSubmit}>
               <div>
                 <label
                   htmlFor="email"
@@ -38,6 +68,8 @@ export default function LoginPage() {
                   id="email"
                   className="bg-blackGray border border-gray-300 text-black text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black"
                   placeholder="name@company.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   required
                 />
               </div>
@@ -54,6 +86,8 @@ export default function LoginPage() {
                     id="password"
                     className="bg-blackGray border border-gray-300 text-black text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black pr-10"
                     placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     required
                   />
                   <img
@@ -65,16 +99,8 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between">
-                <div className="flex items-start">
-                  <div className="flex items-center h-5">
-
-                  </div>
-                </div>
-              </div>
               <button
                 type="submit"
-                onClick={() => router.push('/dashboardAdmin')}
                 className="w-full text-black bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-full text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
               >
                 Sign in
@@ -84,6 +110,5 @@ export default function LoginPage() {
         </div>
       </div>
     </section>
-
   );
 }

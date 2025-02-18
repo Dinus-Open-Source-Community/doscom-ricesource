@@ -1,5 +1,5 @@
 import React from "react";
-import TopBar from "@/components/adminDashboard/topBar";
+import TopBar from "@/components/admin/topBar";
 
 export default function AdminDashboardPage() {
   return (
