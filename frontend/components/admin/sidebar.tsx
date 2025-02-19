@@ -5,6 +5,9 @@ import Link from "next/link";
 import { BiLogOutCircle } from "react-icons/bi";
 import { FaRegUser } from "react-icons/fa6";
 import { RiAdminLine } from "react-icons/ri";
+import { CiSettings } from "react-icons/ci";
+import { CiUser } from "react-icons/ci";
+import { HiDotsHorizontal } from "react-icons/hi";
 
 export default function Sidebar() {
   const [expanded, setExpanded] = useState(true);
@@ -48,19 +51,42 @@ export default function Sidebar() {
               <button id="hs-sidebar-header-example-with-dropdown" type="button" className="w-full inline-flex shrink-0 items-center gap-x-2 p-2 text-start text-sm text-gray-800 rounded-md hover:bg-green-100 focus:outline-none focus:bg-green-300 dark:text-neutral-200 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700" aria-haspopup="menu" aria-expanded="false" aria-label="Dropdown">
                 <img className="shrink-0 size-5 rounded-full" src="/image/rapi.jpg" alt="Avatar" />
                 Raffy Attala
-                <svg className="shrink-0 size-3.5 ms-auto" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m7 15 5 5 5-5" /><path d="m7 9 5-5 5 5" /></svg>
+                {/* <svg className="shrink-0 size-3.5 ms-auto" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m7 15 5 5 5-5" /><path d="m7 9 5-5 5 5" /></svg> */}
+                <HiDotsHorizontal className="shrink-0 size-3.5 ms-auto"/>
               </button>
 
-              <div className="hs-dropdown-menu hs-dropdown-open:opacity-100 w-60 transition-[opacity,margin] duration opacity-0 hidden z-20 bg-white border border-gray-200 rounded-lg shadow-lg dark:bg-neutral-900 dark:border-neutral-700" role="menu" aria-orientation="vertical" aria-labelledby="hs-sidebar-header-example-with-dropdown">
-                <div className="p-1">
-                  <a className="flex items-center gap-x-3 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-green-100 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:bg-green-300 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800" href="#">
-                    My account
+              <div
+                className="hs-dropdown-menu hs-dropdown-open:opacity-100 w-60 transition-opacity duration-200 opacity-0 hidden z-20 bg-white border border-gray-200 rounded-lg shadow-lg dark:bg-neutral-900 dark:border-neutral-700"
+                role="menu"
+                aria-orientation="vertical"
+              >
+                <div className="p-1 space-y-1">
+                  <a
+                    href="#"
+                    className="flex items-center gap-3 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-green-100 focus:bg-green-300 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
+                  >
+                    <CiUser className="size-5" />
+                    My Account
                   </a>
-                  <a className="flex items-center gap-x-3 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-green-100 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:bg-green-300 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800" href="#">
+
+                  <a
+                    href="#"
+                    className="flex items-center gap-3 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-green-100 focus:bg-green-300 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
+                  >
+                    <CiSettings className="size-5" />
                     Settings
+                  </a>
+
+                  <a
+                    href="#"
+                    className="flex items-center gap-3 py-2 px-3 rounded-lg text-sm text-gray-700 hover:bg-red-500 hover:text-white focus:bg-red-800"
+                  >
+                    <BiLogOutCircle className="size-5" />
+                    Logout
                   </a>
                 </div>
               </div>
+
             </div>
           </div>
 
@@ -82,7 +108,7 @@ export default function Sidebar() {
                     href="../dashboardAdmin/userAdmin"
                     className="flex items-center gap-x-3 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-green-100 focus:bg-green-300"
                   >
-                  <RiAdminLine className="size-4" />
+                    <RiAdminLine className="size-4" />
                     User admin
                   </Link>
                 </li>
@@ -111,12 +137,12 @@ export default function Sidebar() {
                   </Link>
                 </li>
 
-                <li>
+                {/* <li>
                   <a className="flex items-center gap-x-3 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-red-500 hover:text-white focus:bg-red-800" href="#">
                     <BiLogOutCircle className="size-4 w-[17px] h-[17px]" />
                     Logout
                   </a>
-                </li>
+                </li> */}
               </ul>
             </div>
 

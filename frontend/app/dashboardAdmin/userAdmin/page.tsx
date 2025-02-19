@@ -1,5 +1,8 @@
 'use client'
 import React, { useState } from 'react';
+import { LuUserRoundPlus } from "react-icons/lu";
+import { LiaUserEditSolid } from "react-icons/lia";
+import { AiOutlineUserDelete } from "react-icons/ai";
 
 const UserTable = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -57,29 +60,31 @@ const UserTable = () => {
   const currentItems = filteredUsers.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
 
-//   const handlePageChange = (pageNumber) => {
-//     setCurrentPage(pageNumber);
-//   };
+  //   const handlePageChange = (pageNumber) => {
+  //     setCurrentPage(pageNumber);
+  //   };
 
   return (
     <div className="p-4 sm:ml-64">
       {/* Header Section */}
       <div className="flex justify-between items-center mt-4 bg-gray-100 p-4 rounded-lg">
-        <div>
-          <h1 className="font-semibold text-xl text-gray-800">User Admin</h1>
-        </div>
+        <h1 className="font-semibold text-xl text-gray-800">User Admin</h1>
+
         <div className="flex gap-4">
-          <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors">
-            Create
+          <button className="bg-green-500 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
+            <LuUserRoundPlus className="w-5 h-5" /> Create
           </button>
-          <button className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-colors">
-            Export
+
+          <button className="bg-[#FDAE4B] hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
+            <LiaUserEditSolid className="w-5 h-5" /> Edit
           </button>
-          <button className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors">
-            Delete
+
+          <button className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
+            <AiOutlineUserDelete className="w-5 h-5" /> Delete
           </button>
         </div>
       </div>
+
 
       {/* Stats Section */}
       <div className="bg-white shadow-md w-full mt-4 rounded-lg p-4">
@@ -178,12 +183,11 @@ const UserTable = () => {
               {[...Array(totalPages)].map((_, index) => (
                 <button
                   key={index + 1}
-                //   onClick={() => handlePageChange(index + 1)}
-                  className={`relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium ${
-                    currentPage === index + 1
-                      ? 'text-blue-600 bg-blue-50'
-                      : 'text-gray-500 hover:bg-gray-50'
-                  }`}
+                  //   onClick={() => handlePageChange(index + 1)}
+                  className={`relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium ${currentPage === index + 1
+                    ? 'text-blue-600 bg-blue-50'
+                    : 'text-gray-500 hover:bg-gray-50'
+                    }`}
                 >
                   {index + 1}
                 </button>
