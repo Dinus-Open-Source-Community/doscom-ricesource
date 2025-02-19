@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, use } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -27,6 +27,7 @@ interface CommentProps {
 export function Comment({ comment, replies, onReply }: CommentProps) {
   const [isReplying, setIsReplying] = useState(false);
   const [replyContent, setReplyContent] = useState("");
+  const [isDisabled, setIsDisabled] = useState(true);
 
   const handleReply = () => {
     if (replyContent.trim()) {
@@ -35,6 +36,13 @@ export function Comment({ comment, replies, onReply }: CommentProps) {
       setIsReplying(false);
     }
   };
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      setIsDisabled(false);
+    }
+  }, []);
 
   return (
     <div className="mb-4">
@@ -54,6 +62,7 @@ export function Comment({ comment, replies, onReply }: CommentProps) {
           </div>
           <p className="mt-1">{comment.description}</p>
           <Button
+            disabled={isDisabled}
             variant="ghost"
             size="sm"
             className="mt-2"
