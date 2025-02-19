@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Heart } from "lucide-react";
 
@@ -11,6 +11,7 @@ interface LikeButtonProps {
 
 export default function LikeButton({ initialLikes, riceId }: LikeButtonProps) {
   const [likes, setLikes] = useState(initialLikes);
+  const [disable, setDisable] = useState(true);
   const [isLiked, setIsLiked] = useState(false);
 
   const handleLike = async () => {
@@ -24,10 +25,18 @@ export default function LikeButton({ initialLikes, riceId }: LikeButtonProps) {
     setIsLiked(!isLiked);
   };
 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      setDisable(false);
+    }
+  }, []);
+
   return (
     <Button
       variant="ghost"
       size="sm"
+      disabled={disable}
       className={`flex items-center space-x-1 ${
         isLiked ? "text-red-500" : "text-muted-foreground"
       }`}
