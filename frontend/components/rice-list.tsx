@@ -12,10 +12,10 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 import LikeButton from "./like-button";
-import CardBookmarkButton from "./card-bookmark-button";
 import Search from "./search";
 import Sort from "./sort";
 import { Rice } from "@/types";
+import BookmarkButton from "./bookmark-button";
 
 interface RiceListProps {
   initialRices: Rice[];
@@ -105,7 +105,7 @@ export default function RiceList({ initialRices }: RiceListProps) {
                   </div>
                   <div className="flex items-center space-x-2">
                     <LikeButton initialLikes={rice.like} riceId={rice.id} />
-                    <CardBookmarkButton riceId={rice.id} />
+                    <BookmarkButton riceId={rice.id} variant="icon" />
                   </div>
                 </div>
                 <Link href={`/ricesource/rice/${rice.id}`} className="w-full">

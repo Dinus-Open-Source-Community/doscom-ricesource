@@ -6,9 +6,13 @@ import { Bookmark } from "lucide-react";
 
 interface BookmarkButtonProps {
   riceId: number;
+  variant: "text" | "icon";
 }
 
-export default function BookmarkButton({ riceId }: BookmarkButtonProps) {
+export default function BookmarkButton({
+  riceId,
+  variant,
+}: BookmarkButtonProps) {
   const [isBookmarked, setIsBookmarked] = useState(false);
 
   const handleBookmark = async () => {
@@ -20,14 +24,21 @@ export default function BookmarkButton({ riceId }: BookmarkButtonProps) {
   return (
     <Button
       variant="ghost"
-      size="sm"
+      size={variant === "text" ? "sm" : "icon"}
       className={`flex items-center space-x-1 ${
         isBookmarked ? "text-yellow-500" : "text-muted-foreground"
       }`}
       onClick={handleBookmark}
     >
       <Bookmark className={`w-4 h-4 ${isBookmarked ? "fill-current" : ""}`} />
-      <span>{isBookmarked ? "Bookmarked" : "Bookmark"}</span>
+      {variant === "text" && (
+        <span>{isBookmarked ? "Bookmarked" : "Bookmark"}</span>
+      )}
+      {variant === "icon" && (
+        <span className="sr-only">
+          {isBookmarked ? "Remove Bookmark" : "Bookmark"}
+        </span>
+      )}
     </Button>
   );
 }

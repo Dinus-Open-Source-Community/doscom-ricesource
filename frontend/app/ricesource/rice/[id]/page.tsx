@@ -106,7 +106,7 @@ export default async function RiceDetailPage({
             </CardContent>
             <CardFooter className="flex justify-between items-center">
               <LikeButton initialLikes={rice.like} riceId={rice.id} />
-              <BookmarkButton riceId={rice.id} />
+              <BookmarkButton riceId={rice.id} variant="text" />
             </CardFooter>
           </Card>
         </div>
