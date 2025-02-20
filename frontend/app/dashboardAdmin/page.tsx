@@ -7,7 +7,7 @@ export default function AdminDashboardPage() {
       <div className="px-4 sm:ml-64">
         <div className="p-4 h-screen  rounded-lg dark:border-gray-700">
           {/* Horizontal line with spacing */}
-          <hr className="border-t border-gray-300 my-2" />
+          {/* <hr className="border-t border-gray-300 my-2" /> */}
 
           <h1 className="text-2xl font-bold">DashBoard</h1>
           <p className="my-2 text-sm">Admin of RiceSource, manage people</p>
