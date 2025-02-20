@@ -1,7 +1,15 @@
+"use client"
+
 import TopBar from "@/components/admin/topBar";
+import { useEffect } from "react";
 import Sidebar from "@/components/admin/sidebar";
+import { redirect } from "next/navigation";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
+  useEffect(()=>{
+    const token = localStorage.getItem("token")
+    if(!token) redirect("/loginAdmin")
+  },[])
   return (
     <section className="bg-white h-screen overflow-hidden flex">
       <Sidebar />

@@ -2,36 +2,30 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import { adminLogin } from "@/actions/authAdmin";
 
 export default function LoginPage() {
   const router = useRouter();
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
     try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
-  
-      const data = await response.json();
-      if (!response.ok) {
-        setError(data.error || "Login failed");
+      const response = await adminLogin({email,password})
+
+      if (!response) {
+        setError( true);
         return;
       }
   
-      localStorage.setItem("token", data.token);
+      localStorage.setItem("token", response.token);
       router.push("/dashboardAdmin");
     } catch (err) {
-      setError("Something went wrong. Please try again.");
+      setError(true);
     }
   };
   
@@ -72,6 +66,7 @@ export default function LoginPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                 />
+                {error && <p className="text-red-500">Enter Valid Email</p>}
               </div>
               <div className="relative">
                 <label
@@ -90,6 +85,8 @@ export default function LoginPage() {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                   />
+                                  {error && <p className="text-red-500">Enter Valid Email</p>}
+
                   <img
                     src={passwordVisible ? "close-eye.svg" : "open-eye.svg"}
                     alt="Toggle Visibility"
@@ -101,6 +98,7 @@ export default function LoginPage() {
 
               <button
                 type="submit"
+
                 className="w-full text-black bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-full text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
               >
                 Sign in
