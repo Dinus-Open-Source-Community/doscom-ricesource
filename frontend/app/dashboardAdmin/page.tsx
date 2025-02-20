@@ -4,8 +4,7 @@ import TopBar from "@/components/admin/topBar";
 export default function AdminDashboardPage() {
   return (
     <div className="bg-white">
-      <div className="px-4 sm:ml-64">
-        <div className="p-4 h-screen  rounded-lg dark:border-gray-700">
+      <div className="p-4 h-screen  rounded-lg dark:border-gray-700">
           {/* Horizontal line with spacing */}
           {/* <hr className="border-t border-gray-300 my-2" /> */}
 
@@ -35,7 +34,6 @@ export default function AdminDashboardPage() {
             </div>
           </div>
         </div>
-      </div>
     </div>
   );
 }

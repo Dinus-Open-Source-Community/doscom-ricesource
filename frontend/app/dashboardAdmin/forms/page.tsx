@@ -66,7 +66,7 @@ const FormsTable = () => {
   //   };
 
   return (
-    <div className="p-4 sm:ml-64">
+    <div className="">
       {/* Header Section */}
       <div className="flex justify-between items-center mt-4 bg-gray-100 p-4 rounded-lg">
         <h1 className="font-semibold text-xl text-gray-800">Table form</h1>

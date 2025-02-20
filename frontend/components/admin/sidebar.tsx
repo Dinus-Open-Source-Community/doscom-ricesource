@@ -57,7 +57,7 @@ export default function Sidebar() {
           <div className="mt-auto p-2 border-y border-gray-200 dark:border-neutral-700">
             <div className="hs-dropdown [--strategy:absolute] [--auto-close:inside] relative w-full inline-flex">
               <button id="hs-sidebar-header-example-with-dropdown" type="button" className="w-full inline-flex shrink-0 items-center gap-x-2 p-2 text-start text-sm text-gray-800 rounded-md hover:bg-green-100 focus:outline-none focus:bg-green-300 dark:text-neutral-200 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700" aria-haspopup="menu" aria-expanded="false" aria-label="Dropdown">
-                <img className="shrink-0 size-5 rounded-full" src="/image/rapi.jpg" alt="Avatar" />
+                <img className="shrink-0 size-5 rounded-full bg-gray-200" src="/image/default-user-preview.png" alt="Avatar" />
                 Raffy Attala
                 {/* <svg className="shrink-0 size-3.5 ms-auto" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m7 15 5 5 5-5" /><path d="m7 9 5-5 5 5" /></svg> */}
                 <HiDotsHorizontal className="shrink-0 size-3.5 ms-auto" />
@@ -70,15 +70,7 @@ export default function Sidebar() {
               >
                 <div className="p-1 space-y-1">
                   <a
-                    href="#"
-                    className="flex items-center gap-3 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-green-100 focus:bg-green-300 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
-                  >
-                    <CiUser className="size-5" />
-                    My Account
-                  </a>
-
-                  <a
-                    href="#"
+                    href="../dashboardAdmin/setting"
                     className="flex items-center gap-3 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-green-100 focus:bg-green-300 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
                   >
                     <CiSettings className="size-5" />

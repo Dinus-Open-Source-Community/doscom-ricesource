@@ -13,22 +13,22 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
     try {
-      const response = await adminLogin({email,password})
+      const response = await adminLogin({ email, password })
 
       if (!response) {
-        setError( true);
+        setError(true);
         return;
       }
-  
+
       localStorage.setItem("token", response.token);
       router.push("/dashboardAdmin");
     } catch (err) {
       setError(true);
     }
   };
-  
+
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
@@ -85,7 +85,7 @@ export default function LoginPage() {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                   />
-                                  {error && <p className="text-red-500">Enter Valid Email</p>}
+                  {error && <p className="text-red-500">Enter Valid Email</p>}
 
                   <img
                     src={passwordVisible ? "close-eye.svg" : "open-eye.svg"}

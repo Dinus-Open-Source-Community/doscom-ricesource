@@ -4,6 +4,19 @@ import { LuUserRoundPlus } from "react-icons/lu";
 import { LiaUserEditSolid } from "react-icons/lia";
 import { AiOutlineUserDelete } from "react-icons/ai";
 
+import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+
 const UserTable = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -65,15 +78,46 @@ const UserTable = () => {
   //   };
 
   return (
-    <div className="p-4 sm:ml-64">
+    <div className="">
       {/* Header Section */}
       <div className="flex justify-between items-center mt-4 bg-gray-100 p-4 rounded-lg">
         <h1 className="font-semibold text-xl text-gray-800">User Admin</h1>
 
         <div className="flex gap-4">
-          <button className="bg-green-500 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
+          {/* <button className="bg-green-500 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
             <LuUserRoundPlus className="w-5 h-5" /> Create
-          </button>
+          </button> */}
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline">Edit Profile</Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px] bg-black">
+              <DialogHeader>
+                <DialogTitle>Edit profile</DialogTitle>
+                <DialogDescription>
+                  Make changes to your profile here. Click save when you're done.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="name" className="text-right">
+                    Name
+                  </Label>
+                  <Input id="name" value="Pedro Duarte" className="col-span-3" />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="username" className="text-right">
+                    Username
+                  </Label>
+                  <Input id="username" value="@peduarte" className="col-span-3" />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button type="submit">Save changes</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
 
           <button className="bg-[#FDAE4B] hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
             <LiaUserEditSolid className="w-5 h-5" /> Edit

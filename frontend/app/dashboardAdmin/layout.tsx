@@ -13,7 +13,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <section className="bg-white h-screen overflow-hidden flex">
       <Sidebar />
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col px-4 sm:ml-64">
         {/* <TopBar /> */}
         <div className="flex-1 overflow-hidden">{children}</div>
       </div>
