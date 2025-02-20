@@ -45,7 +45,7 @@ export default function AdminSettings() {
         <div className="flex-1 overflow-y-auto p-6">
             <h1 className="text-2xl font-bold text-gray-900 mb-8">Profile Settings</h1>
 
-            <form onSubmit={handleSubmit} className="bg-white shadow rounded-lg p-6">
+            <form onSubmit={handleSubmit} className="bg-white  rounded-lg p-6">
                 <div className="md:flex items-center gap-8 mb-8">
                     <div className="mb-4 md:mb-0">
                         <div className="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
