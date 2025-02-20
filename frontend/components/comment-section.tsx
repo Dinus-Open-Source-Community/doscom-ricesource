@@ -34,6 +34,7 @@ export default function CommentSection({ riceId }: CommentSectionProps) {
   const [newComment, setNewComment] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isDisabled, setIsDisabled] = useState(true);
   const [isPosting, setIsPosting] = useState(false);
 
   const fetchComments = async () => {
@@ -53,6 +54,13 @@ export default function CommentSection({ riceId }: CommentSectionProps) {
   useEffect(() => {
     fetchComments();
   }, [riceId]);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      setIsDisabled(false);
+    }
+  }, []);
 
   const handleSubmitComment = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -137,7 +145,10 @@ export default function CommentSection({ riceId }: CommentSectionProps) {
   return (
     <div className="mt-8">
       <h2 className="text-2xl font-bold mb-4">Comments</h2>
-      <form onSubmit={handleSubmitComment} className="mb-4">
+      <form
+        onSubmit={handleSubmitComment}
+        className={`mb-4 ${isDisabled && "hidden"}`}
+      >
         <Textarea
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
