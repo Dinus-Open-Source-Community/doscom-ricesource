@@ -3,26 +3,48 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Heart } from "lucide-react";
+import { likeConfig } from "@/actions/like";
 
 interface LikeButtonProps {
   initialLikes: number;
   riceId: number;
+  initialIsLiked?: boolean; // Add an optional prop to initialize the liked state
 }
 
-export default function LikeButton({ initialLikes, riceId }: LikeButtonProps) {
+export default function LikeButton({
+  initialLikes,
+  riceId,
+  initialIsLiked = false, // Default to false if not provided
+}: LikeButtonProps) {
   const [likes, setLikes] = useState(initialLikes);
+  const [isLiked, setIsLiked] = useState(initialIsLiked);
+  const [isLoading, setIsLoading] = useState(false); // Add loading state to prevent multiple clicks
   const [disable, setDisable] = useState(true);
-  const [isLiked, setIsLiked] = useState(false);
 
   const handleLike = async () => {
-    // In a real application, you would send a request to your API here
-    // For now, we'll just update the state locally
-    if (isLiked) {
-      setLikes(likes - 1);
-    } else {
-      setLikes(likes + 1);
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      console.error("No token found");
+      return;
     }
-    setIsLiked(!isLiked);
+
+    setIsLoading(true); // Disable the button while the request is in progress
+
+    try {
+      if (isLiked) {
+        await likeConfig(riceId.toString(), token);
+        setLikes((prevLikes) => prevLikes - 1); // Use a functional update for consistency
+      } else {
+        await likeConfig(riceId.toString(), token);
+        setLikes((prevLikes) => prevLikes + 1); // Use a functional update for consistency
+      }
+      setIsLiked((prevIsLiked) => !prevIsLiked); // Toggle the liked state
+    } catch (error) {
+      console.error("Error liking the config:", error);
+    } finally {
+      setIsLoading(false); // Re-enable the button after the request completes
+    }
   };
 
   useEffect(() => {
@@ -36,7 +58,7 @@ export default function LikeButton({ initialLikes, riceId }: LikeButtonProps) {
     <Button
       variant="ghost"
       size="sm"
-      disabled={disable}
+      disabled={disable || isLoading} // Disable button if loading or no token
       className={`flex items-center space-x-1 ${
         isLiked ? "text-red-500" : "text-muted-foreground"
       }`}

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Bookmark } from "lucide-react";
+import { bookmarkConfig } from "@/actions/bookmark";
 
 interface BookmarkButtonProps {
   riceId: number;
@@ -17,6 +18,13 @@ export default function BookmarkButton({
   const [isDisabled, setIsDisabled] = useState(true);
 
   const handleBookmark = async () => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      console.error("No token found");
+      return;
+    }
+    await bookmarkConfig(riceId.toString(), token);
     // In a real application, you would send a request to your API here
     // For now, we'll just update the state locally
     setIsBookmarked(!isBookmarked);
