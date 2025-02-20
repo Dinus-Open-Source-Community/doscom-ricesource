@@ -1,9 +1,20 @@
 'use client'
 import React, { useState } from 'react';
+import { MdDelete } from "react-icons/md";
+import { MdOutlineEdit } from "react-icons/md";
 
-import { LuUserRoundPlus } from "react-icons/lu";
-import { LiaUserEditSolid } from "react-icons/lia";
-import { AiOutlineUserDelete } from "react-icons/ai";
+import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 
 const FormsTable = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -69,22 +80,42 @@ const FormsTable = () => {
     <div className="">
       {/* Header Section */}
       <div className="flex justify-between items-center mt-4 bg-gray-100 p-4 rounded-lg">
-        <h1 className="font-semibold text-xl text-gray-800">Table form</h1>
+        <h1 className="font-semibold text-xl text-gray-800">Config Table</h1>
 
         <div className="flex gap-4">
-          <button className="bg-green-500 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
-            <LuUserRoundPlus className="w-5 h-5" /> Create
-          </button>
-
-          <button className="bg-[#FDAE4B] hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
-            <LiaUserEditSolid className="w-5 h-5" /> Edit
-          </button>
-
-          <button className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
-            <AiOutlineUserDelete className="w-5 h-5" /> Delete
-          </button>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline" className='bg-green-600 hover:bg-green-700 text-white'>Edit Profile</Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px] bg-black">
+              <DialogHeader>
+                <DialogTitle>Edit profile</DialogTitle>
+                <DialogDescription>
+                  Make changes to your profile here. Click save when you're done.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="name" className="text-right">
+                    Name
+                  </Label>
+                  <Input id="name" value="Pedro Duarte" className="col-span-3" />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="username" className="text-right">
+                    Username
+                  </Label>
+                  <Input id="username" value="@peduarte" className="col-span-3" />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button type="submit">Save changes</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
+
 
       {/* Stats Section */}
       <div className="bg-white shadow-md w-full mt-4 rounded-lg p-4">
@@ -114,7 +145,7 @@ const FormsTable = () => {
           <input
             type="text"
             placeholder="Search users..."
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg "
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -128,46 +159,59 @@ const FormsTable = () => {
 
       {/* Table Section */}
       <div className="mt-4 bg-white rounded-lg shadow-md overflow-x-auto">
-        <table className="min-w-full">
-          <thead className="bg-gray-50">
+      <table className="min-w-full">
+        <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Profile
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Email
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Username
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Comment
-              </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Profile
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Email
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Username
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Comment
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions
+                </th>
             </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+        </thead>
+        <tbody className="bg-white divide-y divide-gray-200">
             {currentItems.map((user) => (
-              <tr key={user.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <img
-                    src={user.profile}
-                    alt={user.username}
-                    className="h-10 w-10 rounded-full"
-                  />
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {user.email}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {user.username}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {user.comment}
-                </td>
-              </tr>
+                <tr key={user.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                        <img
+                            src={user.profile}
+                            alt={user.username}
+                            className="h-10 w-10 rounded-full"
+                        />
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {user.email}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {user.username}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {user.comment}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 flex space-x-4">
+                        <button className="text-blue-500 hover:text-blue-700 flex items-center space-x-1">
+                            <MdOutlineEdit size={20} />
+                            <span>Edit</span>
+                        </button>
+                        <button className="text-red-500 hover:text-red-700 flex items-center space-x-1">
+                            <MdDelete size={20} />
+                            <span>Delete</span>
+                        </button>
+                    </td>
+                </tr>
             ))}
-          </tbody>
-        </table>
+        </tbody>
+    </table>
 
         {/* Pagination */}
         <div className="px-4 py-3 flex items-center justify-between border-t border-gray-200">
@@ -185,8 +229,8 @@ const FormsTable = () => {
                   key={index + 1}
                   //   onClick={() => handlePageChange(index + 1)}
                   className={`relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium ${currentPage === index + 1
-                      ? 'text-blue-600 bg-blue-50'
-                      : 'text-gray-500 hover:bg-gray-50'
+                    ? 'text-blue-600 bg-blue-50'
+                    : 'text-gray-500 hover:bg-gray-50'
                     }`}
                 >
                   {index + 1}
