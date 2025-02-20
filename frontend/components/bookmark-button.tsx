@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Bookmark } from "lucide-react";
 
@@ -14,6 +14,7 @@ export default function BookmarkButton({
   variant,
 }: BookmarkButtonProps) {
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(true);
 
   const handleBookmark = async () => {
     // In a real application, you would send a request to your API here
@@ -21,9 +22,17 @@ export default function BookmarkButton({
     setIsBookmarked(!isBookmarked);
   };
 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      setIsDisabled(false);
+    }
+  }, []);
+
   return (
     <Button
       variant="ghost"
+      disabled={isDisabled}
       size={variant === "text" ? "sm" : "icon"}
       className={`flex items-center space-x-1 ${
         isBookmarked ? "text-yellow-500" : "text-muted-foreground"
