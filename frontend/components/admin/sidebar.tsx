@@ -28,7 +28,7 @@ export default function Sidebar() {
         </button>
       </div>
 
-      <div id="hs-sidebar-header" className="hs-overlay [--auto-close:lg] lg:block lg:translate-x-0 lg:end-auto lg:bottom-0 w-64 hs-overlay-open:translate-x-0 -translate-x-full transition-all duration-300 transform h-full hidden fixed top-0 start-0 bottom-0 z-[60] bg-white border-e border-gray-200 dark:bg-neutral-800 dark:border-neutral-700" role="dialog" aria-label="Sidebar" >
+      <div id="hs-sidebar-header" className="hs-overlay [--auto-close:lg] lg:block lg:translate-x-0 lg:end-auto lg:bottom-0 w-64 hs-overlay-open:translate-x-0 -translate-x-full transition-all duration-300 transform h-full hidden fixed top-0 start-0 bottom-0 z-[10] bg-white border-e border-gray-200 dark:bg-neutral-800 dark:border-neutral-700" role="dialog" aria-label="Sidebar" >
         <div className="relative flex flex-col h-full max-h-full ">
           <header className="p-4 flex justify-between items-center gap-x-2">
             <div className="flex space-x-2">

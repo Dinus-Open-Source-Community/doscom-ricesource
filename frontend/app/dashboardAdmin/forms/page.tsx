@@ -13,6 +13,19 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
@@ -87,9 +100,9 @@ const FormsTable = () => {
             <DialogTrigger asChild>
               <Button variant="outline" className='bg-green-600 hover:bg-green-700 text-white'>Edit Profile</Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px] bg-black">
+            <DialogContent className="sm:max-w-[425px] bg-white z-50">
               <DialogHeader>
-                <DialogTitle>Edit profile</DialogTitle>
+                <DialogTitle>Add config</DialogTitle>
                 <DialogDescription>
                   Make changes to your profile here. Click save when you're done.
                 </DialogDescription>
@@ -99,17 +112,23 @@ const FormsTable = () => {
                   <Label htmlFor="name" className="text-right">
                     Name
                   </Label>
-                  <Input id="name" value="Pedro Duarte" className="col-span-3" />
+                  <Input id="name" value="" className="col-span-3" />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="username" className="text-right">
-                    Username
+                  <Label htmlFor="email" className="text-right">
+                    email
                   </Label>
-                  <Input id="username" value="@peduarte" className="col-span-3" />
+                  <Input id="username" value="" className="col-span-3" />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="password" className="text-right">
+                    password
+                  </Label>
+                  <Input id="username" value="" className="col-span-3" />
                 </div>
               </div>
               <DialogFooter>
-                <Button type="submit">Save changes</Button>
+                <Button type="submit" className='bg-green-600 hover:bg-green-700'>Save changes</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
@@ -159,59 +178,76 @@ const FormsTable = () => {
 
       {/* Table Section */}
       <div className="mt-4 bg-white rounded-lg shadow-md overflow-x-auto">
-      <table className="min-w-full">
-        <thead className="bg-gray-50">
+        <table className="min-w-full">
+          <thead className="bg-gray-50">
             <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Profile
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Email
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Username
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Comment
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Profile
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Email
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Username
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Comment
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Actions
+              </th>
             </tr>
-        </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
             {currentItems.map((user) => (
-                <tr key={user.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                        <img
-                            src={user.profile}
-                            alt={user.username}
-                            className="h-10 w-10 rounded-full"
-                        />
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {user.email}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {user.username}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {user.comment}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 flex space-x-4">
-                        <button className="text-blue-500 hover:text-blue-700 flex items-center space-x-1">
-                            <MdOutlineEdit size={20} />
-                            <span>Edit</span>
-                        </button>
-                        <button className="text-red-500 hover:text-red-700 flex items-center space-x-1">
-                            <MdDelete size={20} />
-                            <span>Delete</span>
-                        </button>
-                    </td>
-                </tr>
+              <tr key={user.id} className="hover:bg-gray-50">
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <img
+                    src={user.profile}
+                    alt={user.username}
+                    className="h-10 w-10 rounded-full"
+                  />
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {user.email}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {user.username}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {user.comment}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 flex space-x-4">
+                  <button className="text-blue-500 hover:text-blue-700 flex items-center space-x-1">
+                    <MdOutlineEdit size={20} className='text-orange-500' />
+                    <span className='text-orange-500'>Edit</span>
+                  </button>
+                  <AlertDialog>
+                    <AlertDialogTrigger className=''>
+                      <button className='text-red-500 hover:text-red-700 flex items-center space-x-1'>
+                        <MdDelete size={20} />
+                        <span>Delete</span>
+                      </button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent className='bg-white'>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Are you absolutely sure want to delete this admin account?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone. This will permanently delete this account
+                          and remove this data from our servers.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction className='bg-red-500'>Continue</AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </td>
+              </tr>
             ))}
-        </tbody>
-    </table>
+          </tbody>
+        </table>
 
         {/* Pagination */}
         <div className="px-4 py-3 flex items-center justify-between border-t border-gray-200">

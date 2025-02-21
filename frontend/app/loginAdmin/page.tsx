@@ -88,7 +88,7 @@ export default function LoginPage() {
                   {error && <p className="text-red-500">Enter Valid Email</p>}
 
                   <img
-                    src={passwordVisible ? "close-eye.svg" : "open-eye.svg"}
+                    src={passwordVisible ? "/close-eye.svg" : "/open-eye.svg"}
                     alt="Toggle Visibility"
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
                     onClick={togglePasswordVisibility}
