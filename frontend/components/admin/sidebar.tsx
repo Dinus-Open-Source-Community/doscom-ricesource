@@ -10,10 +10,14 @@ import { RiAdminLine } from "react-icons/ri";
 import { CiSettings } from "react-icons/ci";
 import { CiUser } from "react-icons/ci";
 import { HiDotsHorizontal } from "react-icons/hi";
+import { FaRegMoon } from "react-icons/fa";
+import { IoMdSunny } from "react-icons/io";
 
 export default function Sidebar() {
   const [expanded, setExpanded] = useState(true);
   const [username, setUsername] = useState("");
+  const [isRotated, setIsRotated] = useState(false);
+  const [isSunny, setIsSunny] = useState(true);
   const router = useRouter();
 
 
@@ -28,6 +32,12 @@ export default function Sidebar() {
     const storedUsername = localStorage.getItem("username") || "Admin";
     setUsername(storedUsername);
   }, []);
+
+
+  const toggleTheme = () => {
+    setIsSunny(prevState => !prevState);
+    setIsRotated(prevState => !prevState);
+  };
 
 
   return (
@@ -70,7 +80,7 @@ export default function Sidebar() {
                 <img className="shrink-0 size-5 rounded-full bg-gray-200" src="/image/default-user-preview.png" alt="Avatar" />
                 {/* Raffy Attala */}
                 <span>
-                {username}
+                  {username}
                 </span>
                 <HiDotsHorizontal className="shrink-0 size-3.5 ms-auto" />
               </button>
@@ -103,7 +113,7 @@ export default function Sidebar() {
             </div>
           </div>
 
-          <nav className="h-full overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-track]:bg-neutral-700 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500">
+          <nav className="h-full flex flex-col justify-between overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-track]:bg-neutral-700 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500">
             <div className="hs-accordion-group pb-0 px-2 pt-2 w-full flex flex-col flex-wrap" data-hs-accordion-always-open>
               <ul className="space-y-1">
                 <li>
@@ -111,7 +121,21 @@ export default function Sidebar() {
                     href="/dashboardAdmin/"
                     className="flex items-center gap-x-3 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-green-100 focus:bg-green-300"
                   >
-                    <svg className="size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" ><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg>
+                    <svg
+                      className="size-4"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                      <polyline points="9 22 9 12 15 12 15 22" />
+                    </svg>
                     Dashboard
                   </Link>
                 </li>
@@ -136,13 +160,23 @@ export default function Sidebar() {
                   </Link>
                 </li>
 
-
                 <li>
                   <Link
                     href="/dashboardAdmin/configForm"
                     className="flex items-center gap-x-3 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-green-100 focus:bg-green-300"
                   >
-                    <svg className="size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg
+                      className="size-4"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
                       <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
                       <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
                     </svg>
@@ -151,7 +185,31 @@ export default function Sidebar() {
                 </li>
               </ul>
             </div>
+
+            <div className="hover:bg-[#232323] bg-neutral-600 flex items-center gap-x-3 py-2 px-2.5 text-sm text-gray-700 rounded-lg w-full mb-2">
+              {isSunny ? (
+                <>
+                  <IoMdSunny className="size-4 text-white hover:text-yellow-400 hover:rotate-90 transition-transform duration-300 ease-in-out" />
+                  <span>Dark mode</span>
+                </>
+              ) : (
+                <>
+                  <FaRegMoon
+                    className={`size-4 text-white hover:text-blue-700 transition-all duration-300 ease-in-out ${isRotated ? "" : "rotate-180"
+                      }`}
+                  />
+                  <span>Light mode</span>
+                </>
+              )}
+
+              <label className="inline-flex items-center cursor-pointer ml-auto">
+                <input type="checkbox" value="" className="sr-only peer" />
+                <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600 dark:peer-checked:bg-blue-600"></div>
+              </label>
+            </div>
           </nav>
+
+
         </div>
       </div>
     </div>

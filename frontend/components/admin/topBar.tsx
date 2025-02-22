@@ -8,8 +8,8 @@ import { IoMdSunny } from "react-icons/io";
 import { FaPlus } from "react-icons/fa";
 
 export default function TopBar() {
-    const [isSunny, setIsSunny] = useState(true); 
     const [isRotated, setIsRotated] = useState(false);
+    const [isSunny, setIsSunny] = useState(true); 
 
     const toggleTheme = () => {
         setIsSunny(prevState => !prevState);
