@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { MdDelete } from "react-icons/md";
 import { MdOutlineEdit } from "react-icons/md";
+import { useRouter } from 'next/navigation'
 
 import { Button } from "@/components/ui/button"
 import {
@@ -89,6 +90,8 @@ const userAdminTable = () => {
   //   const handlePageChange = (pageNumber) => {
   //     setCurrentPage(pageNumber);
   //   };
+
+    const router = useRouter()
 
   return (
     <div className="">
@@ -220,7 +223,9 @@ const userAdminTable = () => {
                   {user.comment}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 flex space-x-4">
-                  <button className="text-blue-500 hover:text-blue-700 flex items-center space-x-1">
+                  <button className="text-blue-500 hover:text-blue-700 flex items-center space-x-1"
+                    onClick={() => router.push('/dashboardAdmin/userAdmin/editAdmin')}
+                  >
                     <MdOutlineEdit size={20} className='text-orange-500' />
                     <span className='text-orange-500'>Edit</span>
                   </button>

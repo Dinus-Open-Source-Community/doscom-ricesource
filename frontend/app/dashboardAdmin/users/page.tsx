@@ -1,5 +1,7 @@
 'use client'
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation'
+
 import { MdDelete } from "react-icons/md";
 import { MdOutlineEdit } from "react-icons/md";
 
@@ -28,8 +30,10 @@ import {
 
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Router } from 'lucide-react';
 
-const userTable = () => {
+
+export default function userTable() {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 4;
@@ -88,6 +92,9 @@ const userTable = () => {
   //   const handlePageChange = (pageNumber) => {
   //     setCurrentPage(pageNumber);
   //   };
+
+  const router = useRouter()
+
 
   return (
     <div className="">
@@ -218,7 +225,9 @@ const userTable = () => {
                   {user.comment}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 flex space-x-4">
-                  <button className="text-blue-500 hover:text-blue-700 flex items-center space-x-1">
+                  <button className="text-blue-500 hover:text-blue-700 flex items-center space-x-1"
+                    onClick={() => router.push('/dashboardAdmin/users/editUser/')}
+                  >
                     <MdOutlineEdit size={20} className='text-orange-500' />
                     <span className='text-orange-500'>Edit</span>
                   </button>
@@ -287,4 +296,4 @@ const userTable = () => {
   );
 };
 
-export default userTable;
+// export default userTable;
