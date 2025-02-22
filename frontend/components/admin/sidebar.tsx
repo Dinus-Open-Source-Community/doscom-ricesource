@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+
 import { BiLogOutCircle } from "react-icons/bi";
 import { FaRegUser } from "react-icons/fa6";
 import { RiAdminLine } from "react-icons/ri";
@@ -12,13 +13,22 @@ import { HiDotsHorizontal } from "react-icons/hi";
 
 export default function Sidebar() {
   const [expanded, setExpanded] = useState(true);
+  const [username, setUsername] = useState("");
   const router = useRouter();
 
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('username');
     router.push("/loginAdmin");
   }
+
+  useEffect(() => {
+    // Fetch username from localStorage or an API
+    const storedUsername = localStorage.getItem("username") || "Admin";
+    setUsername(storedUsername);
+  }, []);
+
 
   return (
     <div className=''>
@@ -58,8 +68,10 @@ export default function Sidebar() {
             <div className="hs-dropdown [--strategy:absolute] [--auto-close:inside] relative w-full inline-flex">
               <button id="hs-sidebar-header-example-with-dropdown" type="button" className="w-full inline-flex shrink-0 items-center gap-x-2 p-2 text-start text-sm text-gray-800 rounded-md hover:bg-green-100 focus:outline-none focus:bg-green-300 dark:text-neutral-200 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700" aria-haspopup="menu" aria-expanded="false" aria-label="Dropdown">
                 <img className="shrink-0 size-5 rounded-full bg-gray-200" src="/image/default-user-preview.png" alt="Avatar" />
-                Raffy Attala
-                {/* <svg className="shrink-0 size-3.5 ms-auto" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m7 15 5 5 5-5" /><path d="m7 9 5-5 5 5" /></svg> */}
+                {/* Raffy Attala */}
+                <span>
+                {username}
+                </span>
                 <HiDotsHorizontal className="shrink-0 size-3.5 ms-auto" />
               </button>
 
@@ -96,7 +108,7 @@ export default function Sidebar() {
               <ul className="space-y-1">
                 <li>
                   <Link
-                    href="../dashboardAdmin/"
+                    href="/dashboardAdmin/"
                     className="flex items-center gap-x-3 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-green-100 focus:bg-green-300"
                   >
                     <svg className="size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" ><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg>
@@ -106,7 +118,7 @@ export default function Sidebar() {
 
                 <li>
                   <Link
-                    href="../dashboardAdmin/userAdmin"
+                    href="/dashboardAdmin/userAdmin"
                     className="flex items-center gap-x-3 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-green-100 focus:bg-green-300"
                   >
                     <RiAdminLine className="size-4" />
@@ -116,7 +128,7 @@ export default function Sidebar() {
 
                 <li>
                   <Link
-                    href="../dashboardAdmin/users"
+                    href="/dashboardAdmin/users"
                     className="flex items-center gap-x-3 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-green-100 focus:bg-green-300"
                   >
                     <FaRegUser className="size-4" />
@@ -127,7 +139,7 @@ export default function Sidebar() {
 
                 <li>
                   <Link
-                    href="../dashboardAdmin/forms"
+                    href="/dashboardAdmin/configForm"
                     className="flex items-center gap-x-3 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-green-100 focus:bg-green-300"
                   >
                     <svg className="size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

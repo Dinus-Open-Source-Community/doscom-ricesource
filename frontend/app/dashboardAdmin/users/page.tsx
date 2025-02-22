@@ -226,7 +226,7 @@ export default function userTable() {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 flex space-x-4">
                   <button className="text-blue-500 hover:text-blue-700 flex items-center space-x-1"
-                    onClick={() => router.push('/dashboardAdmin/users/editUser/')}
+                    onClick={() => router.push('/dashboardAdmin/users/${userId}')}
                   >
                     <MdOutlineEdit size={20} className='text-orange-500' />
                     <span className='text-orange-500'>Edit</span>
