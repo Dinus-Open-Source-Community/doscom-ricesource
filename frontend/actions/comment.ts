@@ -5,15 +5,17 @@ const URL = `${process.env.NEXT_PUBLIC_API_URL}/komentar`;
 
 interface postCommentProps {
     config_id: number;
-    description: string;    
+    description: string;
     id_user: number;
-} 
+    token: string;
+}
 
 interface replyCommentProps {
     config_id: number;
-    description: string;    
+    description: string;
     id_user: number;
     parent_id: number;
+    token: string;
 }
 
 export async function getCommentByRiceId(id: string): Promise<Comment[]> {
@@ -22,12 +24,20 @@ export async function getCommentByRiceId(id: string): Promise<Comment[]> {
     return res.data;
 }
 
-export async function postComment(comment:postCommentProps): Promise<Comment> {
-    const reponse = await axios.post(URL, comment);
+export async function postComment(comment: postCommentProps): Promise<Comment> {
+    const reponse = await axios.post(URL, comment, {
+        headers: {
+            Authorization: `Bearer ${comment.token}`,
+        },
+    });
     return reponse.data;
 }
 
-export async function replyComment (comment:replyCommentProps): Promise<Comment> {
-    const response = await axios.post(URL, comment);
+export async function replyComment(comment: replyCommentProps): Promise<Comment> {
+    const response = await axios.post(URL, comment, {
+        headers: {
+            Authorization: `Bearer ${comment.token}`,
+        },
+    });
     return response.data;
 }
