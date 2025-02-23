@@ -67,10 +67,21 @@ export default function CommentSection({ riceId }: CommentSectionProps) {
     setIsPosting(true);
     if (newComment.trim()) {
       try {
+        const token = localStorage.getItem("token");
+
+        if (!token) throw new Error("User not authenticated");
+
+        const userString = localStorage.getItem("user");
+
+        if (!userString) throw new Error("User data not found in localStorage");
+
+        const user = JSON.parse(userString);
+
         const response = await postComment({
           config_id: riceId,
           description: newComment,
-          id_user: 14,
+          id_user: user.id,
+          token: token,
         });
 
         if (!response) {
@@ -91,11 +102,22 @@ export default function CommentSection({ riceId }: CommentSectionProps) {
 
   const handleReply = async (parentId: number, content: string) => {
     try {
+      const token = localStorage.getItem("token");
+
+      if (!token) throw new Error("User not authenticated");
+
+      const userString = localStorage.getItem("user");
+
+      if (!userString) throw new Error("User data not found in localStorage");
+
+      const user = JSON.parse(userString);
+
       const response = await replyComment({
         config_id: riceId,
         description: content,
-        id_user: 14,
+        id_user: user.id,
         parent_id: parentId,
+        token: token,
       });
 
       if (!response) {
