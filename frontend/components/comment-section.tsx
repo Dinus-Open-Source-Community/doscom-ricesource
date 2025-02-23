@@ -10,6 +10,7 @@ import {
   postComment,
   replyComment,
 } from "@/actions/comment";
+import { AuthDialog } from "./unauthorized-modal";
 
 interface User {
   avatar: string;
@@ -36,6 +37,7 @@ export default function CommentSection({ riceId }: CommentSectionProps) {
   const [error, setError] = useState<string | null>(null);
   const [isDisabled, setIsDisabled] = useState(true);
   const [isPosting, setIsPosting] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const fetchComments = async () => {
     setIsLoading(true);
@@ -45,7 +47,7 @@ export default function CommentSection({ riceId }: CommentSectionProps) {
       setComments(response);
     } catch (err) {
       setError("Comments could not be loaded");
-      console.log("Error loading comments:", err);
+      console.error("Error loading comments:", err);
     } finally {
       setIsLoading(false);
     }
@@ -69,7 +71,10 @@ export default function CommentSection({ riceId }: CommentSectionProps) {
       try {
         const token = localStorage.getItem("token");
 
-        if (!token) throw new Error("User not authenticated");
+        if (!token) {
+          setIsDialogOpen(true);
+          throw new Error("User not authenticated");
+        }
 
         const userString = localStorage.getItem("user");
 
@@ -84,16 +89,16 @@ export default function CommentSection({ riceId }: CommentSectionProps) {
           token: token,
         });
 
-        if (!response) {
-          throw new Error("Failed to post comment");
-        }
-
         setComments([...comments, response]);
         fetchComments();
         setNewComment("");
-      } catch (err) {
+      } catch (err: any) {
         console.error("Error posting comment:", err);
-        // You might want to show an error message to the user here
+        if (err.message === "Unauthorized") {
+          setIsDialogOpen(true); // Tampilkan dialog jika unauthorized
+        } else {
+          setError("Failed to post comment");
+        }
       } finally {
         setIsPosting(false);
       }
@@ -104,7 +109,10 @@ export default function CommentSection({ riceId }: CommentSectionProps) {
     try {
       const token = localStorage.getItem("token");
 
-      if (!token) throw new Error("User not authenticated");
+      if (!token) {
+        setIsDialogOpen(true);
+        throw new Error("User not authenticated");
+      }
 
       const userString = localStorage.getItem("user");
 
@@ -120,15 +128,15 @@ export default function CommentSection({ riceId }: CommentSectionProps) {
         token: token,
       });
 
-      if (!response) {
-        throw new Error("Failed to post reply");
-      }
-
       setComments([...comments, response]);
       fetchComments();
-    } catch (err) {
+    } catch (err: any) {
       console.error("Error posting reply:", err);
-      // You might want to show an error message to the user here
+      if (err.message === "Unauthorized") {
+        setIsDialogOpen(true); // Tampilkan dialog jika unauthorized
+      } else {
+        setError("Failed to post reply");
+      }
     }
   };
 
@@ -177,7 +185,7 @@ export default function CommentSection({ riceId }: CommentSectionProps) {
           placeholder="Add a comment..."
           className="mb-2"
         />
-        <Button type="submit" disabled={isPosting}>
+        <Button type="submit" disabled={isPosting || newComment.trim() === ""}>
           {isPosting ? "Posting..." : "Post Comment"}
         </Button>
       </form>
@@ -188,6 +196,12 @@ export default function CommentSection({ riceId }: CommentSectionProps) {
           <p>No comments yet. Be the first to comment!</p>
         )}
       </div>
+
+      <AuthDialog
+        isOpen={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+        onLoginRedirect={() => (window.location.href = "/login")}
+      />
     </div>
   );
 }
