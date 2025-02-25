@@ -10,6 +10,7 @@ import {
   postComment,
   replyComment,
 } from "@/actions/comment";
+import { AuthDialog } from "./unauthorized-modal";
 
 interface User {
   avatar: string;
@@ -36,6 +37,7 @@ export default function CommentSection({ riceId }: CommentSectionProps) {
   const [error, setError] = useState<string | null>(null);
   const [isDisabled, setIsDisabled] = useState(true);
   const [isPosting, setIsPosting] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const fetchComments = async () => {
     setIsLoading(true);
@@ -45,7 +47,7 @@ export default function CommentSection({ riceId }: CommentSectionProps) {
       setComments(response);
     } catch (err) {
       setError("Comments could not be loaded");
-      console.log("Error loading comments:", err);
+      console.error("Error loading comments:", err);
     } finally {
       setIsLoading(false);
     }
@@ -67,22 +69,36 @@ export default function CommentSection({ riceId }: CommentSectionProps) {
     setIsPosting(true);
     if (newComment.trim()) {
       try {
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+          setIsDialogOpen(true);
+          throw new Error("User not authenticated");
+        }
+
+        const userString = localStorage.getItem("user");
+
+        if (!userString) throw new Error("User data not found in localStorage");
+
+        const user = JSON.parse(userString);
+
         const response = await postComment({
           config_id: riceId,
           description: newComment,
-          id_user: 14,
+          id_user: user.id,
+          token: token,
         });
-
-        if (!response) {
-          throw new Error("Failed to post comment");
-        }
 
         setComments([...comments, response]);
         fetchComments();
         setNewComment("");
-      } catch (err) {
+      } catch (err: any) {
         console.error("Error posting comment:", err);
-        // You might want to show an error message to the user here
+        if (err.message === "Unauthorized") {
+          setIsDialogOpen(true); // Tampilkan dialog jika unauthorized
+        } else {
+          setError("Failed to post comment");
+        }
       } finally {
         setIsPosting(false);
       }
@@ -91,22 +107,36 @@ export default function CommentSection({ riceId }: CommentSectionProps) {
 
   const handleReply = async (parentId: number, content: string) => {
     try {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        setIsDialogOpen(true);
+        throw new Error("User not authenticated");
+      }
+
+      const userString = localStorage.getItem("user");
+
+      if (!userString) throw new Error("User data not found in localStorage");
+
+      const user = JSON.parse(userString);
+
       const response = await replyComment({
         config_id: riceId,
         description: content,
-        id_user: 14,
+        id_user: user.id,
         parent_id: parentId,
+        token: token,
       });
-
-      if (!response) {
-        throw new Error("Failed to post reply");
-      }
 
       setComments([...comments, response]);
       fetchComments();
-    } catch (err) {
+    } catch (err: any) {
       console.error("Error posting reply:", err);
-      // You might want to show an error message to the user here
+      if (err.message === "Unauthorized") {
+        setIsDialogOpen(true); // Tampilkan dialog jika unauthorized
+      } else {
+        setError("Failed to post reply");
+      }
     }
   };
 
@@ -134,13 +164,13 @@ export default function CommentSection({ riceId }: CommentSectionProps) {
     );
   }
 
-  if (error) {
-    return (
-      <div className="mt-8 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-        {error}
-      </div>
-    );
-  }
+  // if (error) {
+  //   return (
+  //     <div className="mt-8 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+  //       {error}
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="mt-8">
@@ -155,7 +185,7 @@ export default function CommentSection({ riceId }: CommentSectionProps) {
           placeholder="Add a comment..."
           className="mb-2"
         />
-        <Button type="submit" disabled={isPosting}>
+        <Button type="submit" disabled={isPosting || newComment.trim() === ""}>
           {isPosting ? "Posting..." : "Post Comment"}
         </Button>
       </form>
@@ -166,6 +196,12 @@ export default function CommentSection({ riceId }: CommentSectionProps) {
           <p>No comments yet. Be the first to comment!</p>
         )}
       </div>
+
+      <AuthDialog
+        isOpen={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+        onLoginRedirect={() => (window.location.href = "/login")}
+      />
     </div>
   );
 }

@@ -1,21 +1,70 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { getUser } from "@/actions/user";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { User } from "@/types";
 
 const navItems = [
-  { name: "Home", href: "/" },
-  { name: "Explore", href: "/explore" },
-  { name: "Submit", href: "/submit" },
-  { name: "About", href: "/about" },
+  { name: "Home", href: "/ricesource" },
+  { name: "About", href: "/ricesource/about" },
+  { name: "Explore", href: "/ricesource/explore" },
 ];
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [token, setToken] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const pathname = usePathname();
+
+  const fetchUserData = async () => {
+    const userString = localStorage.getItem("user");
+    if (userString) {
+      try {
+        const user = JSON.parse(userString);
+        console.log("Parsed user from localStorage:", user); // Debugging
+        if (user?.id) {
+          const response = await getUser(user.id);
+          console.log("Fetched user data from API:", response); // Debugging
+          if (response) {
+            setUser(response);
+          } else {
+            setError("Failed to fetch user data");
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error); // Debugging
+        setError("Failed to parse or fetch user data");
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      console.log("No user data found in localStorage"); // Debugging
+      setError("No user data found in localStorage");
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      setToken(token);
+    }
+
+    fetchUserData();
+  }, []);
+
+  // Log user state changes
+  useEffect(() => {
+    console.log("User state updated:", user);
+  }, [user]);
 
   return (
     <nav className="bg-background shadow-sm">
@@ -24,7 +73,7 @@ export default function Navbar() {
           <div className="flex">
             <Link href="/" className="flex-shrink-0 flex items-center">
               <span className="text-2xl font-bold text-primary">
-                RiceShowcase
+                Ricesource
               </span>
             </Link>
           </div>
@@ -42,6 +91,22 @@ export default function Navbar() {
                 {item.name}
               </Link>
             ))}
+            {user && (
+              <div className=" flex items-center space-x-4">
+                <Avatar>
+                  <AvatarImage
+                    src={user.avatar || "/account.svg"} // Fallback to a default avatar
+                    alt={user.username}
+                  />
+                  <AvatarFallback>
+                    {user.username?.charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <span className="font-semibold capitalize text-md">
+                  {user.username}
+                </span>
+              </div>
+            )}
           </div>
           <div className="flex items-center sm:hidden">
             <Button
@@ -77,6 +142,16 @@ export default function Navbar() {
                 {item.name}
               </Link>
             ))}
+            {user && (
+              <div className="pl-3 pr-4 py-2">
+                <Avatar>
+                  <AvatarImage src={user.avatar} alt={user.username} />
+                  <AvatarFallback>
+                    {user.username?.charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+              </div>
+            )}
           </div>
         </div>
       )}

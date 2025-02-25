@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Heart } from "lucide-react";
 import { likeConfig } from "@/actions/like";
+import { AuthDialog } from "./unauthorized-modal";
 
 interface LikeButtonProps {
   initialLikes: number;
@@ -18,14 +19,17 @@ export default function LikeButton({
 }: LikeButtonProps) {
   const [likes, setLikes] = useState(initialLikes);
   const [isLiked, setIsLiked] = useState(initialIsLiked);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false); // Add loading state to prevent multiple clicks
   const [disable, setDisable] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const handleLike = async () => {
     const token = localStorage.getItem("token");
 
     if (!token) {
       console.error("No token found");
+      setIsDialogOpen(true);
       return;
     }
 
@@ -41,6 +45,8 @@ export default function LikeButton({
       }
       setIsLiked((prevIsLiked) => !prevIsLiked); // Toggle the liked state
     } catch (error) {
+      setIsDialogOpen(true);
+      setError("Failed to like the config");
       console.error("Error liking the config:", error);
     } finally {
       setIsLoading(false); // Re-enable the button after the request completes
@@ -55,17 +61,24 @@ export default function LikeButton({
   }, []);
 
   return (
-    <Button
-      variant="ghost"
-      size="sm"
-      disabled={disable || isLoading} // Disable button if loading or no token
-      className={`flex items-center space-x-1 ${
-        isLiked ? "text-red-500" : "text-muted-foreground"
-      }`}
-      onClick={handleLike}
-    >
-      <Heart className={`w-4 h-4 ${isLiked ? "fill-current" : ""}`} />
-      <span>{likes}</span>
-    </Button>
+    <>
+      <Button
+        variant="ghost"
+        size="sm"
+        disabled={disable || isLoading} // Disable button if loading or no token
+        className={`flex items-center space-x-1 ${
+          isLiked ? "text-red-500" : "text-muted-foreground"
+        }`}
+        onClick={handleLike}
+      >
+        <Heart className={`w-4 h-4 ${isLiked ? "fill-current" : ""}`} />
+        <span>{likes}</span>
+      </Button>
+      <AuthDialog
+        isOpen={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+        onLoginRedirect={() => (window.location.href = "/login")}
+      />
+    </>
   );
 }

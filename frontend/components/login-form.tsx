@@ -49,6 +49,7 @@ export function LoginForm() {
         throw new Error("Login Error");
       }
       localStorage.setItem("token", response.token);
+      localStorage.setItem("user", JSON.stringify(response.user));
       router.push("/");
     } catch (err) {
       setError("Invalid email or password. Please try again.");
