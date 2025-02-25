@@ -13,9 +13,7 @@ export default function AboutPage() {
         <div className="container mx-auto px-4 py-16">
           <div className="grid lg:grid-cols-2 gap-8 items-center">
             <div>
-              <h1 className="text-4xl font-bold mb-4">
-                About Linux Ricing Showcase
-              </h1>
+              <h1 className="text-4xl font-bold mb-4">About Ricesource</h1>
               <p className="text-lg text-muted-foreground mb-6">
                 A community-driven platform celebrating the art of Linux desktop
                 customization, inspired by the open-source spirit of DOSCOM and
