@@ -10,10 +10,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { User } from "@/types";
 
 const navItems = [
-  { name: "Home", href: "/" },
-  { name: "Explore", href: "/explore" },
-  { name: "Submit", href: "/submit" },
-  { name: "About", href: "/about" },
+  { name: "Home", href: "/ricesource" },
+  { name: "About", href: "/ricesource/about" },
 ];
 
 export default function Navbar() {
