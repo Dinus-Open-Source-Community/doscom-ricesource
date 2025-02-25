@@ -21,16 +21,29 @@ export async function getAllBookmarks(token: string): Promise<Bookmark[]> {
     throw new Error("Failed to fetch bookmarks");
   }
 }
+
 export async function bookmarkConfig(id: string, token: string): Promise<void> {
-  await axios.post(
-    `${URL}`,
-    {
-      config_id: id,
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
+  try {
+    const response = await axios.post(
+      `${URL}`,
+      {
+        config_id: id,
       },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 401) {
+        throw new Error("Unauthorized");
+      }
     }
-  );
+    console.error("Error bookmarking config:", error);
+    throw new Error("Failed to bookmark config");
+  }
 }
