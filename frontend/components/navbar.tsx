@@ -12,6 +12,7 @@ import { User } from "@/types";
 const navItems = [
   { name: "Home", href: "/ricesource" },
   { name: "About", href: "/ricesource/about" },
+  { name: "Explore", href: "/ricesource/explore" },
 ];
 
 export default function Navbar() {
@@ -72,7 +73,7 @@ export default function Navbar() {
           <div className="flex">
             <Link href="/" className="flex-shrink-0 flex items-center">
               <span className="text-2xl font-bold text-primary">
-                RiceShowcase
+                Ricesource
               </span>
             </Link>
           </div>
