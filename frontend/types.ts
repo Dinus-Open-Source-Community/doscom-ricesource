@@ -36,3 +36,10 @@ export interface User {
   created_at: string;
   avatar: string;
 }
+
+export interface Bookmark {
+  id: number;
+  config_id: number;
+  created_at: string;
+  config: Rice;
+}
