@@ -164,13 +164,13 @@ export default function CommentSection({ riceId }: CommentSectionProps) {
     );
   }
 
-  if (error) {
-    return (
-      <div className="mt-8 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-        {error}
-      </div>
-    );
-  }
+  // if (error) {
+  //   return (
+  //     <div className="mt-8 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+  //       {error}
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="mt-8">
