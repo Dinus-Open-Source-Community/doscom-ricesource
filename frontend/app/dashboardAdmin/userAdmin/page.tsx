@@ -4,32 +4,8 @@ import { MdDelete } from "react-icons/md";
 import { MdOutlineEdit } from "react-icons/md";
 import { useRouter } from 'next/navigation'
 
-import { Button } from "@/components/ui/button"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
-
-
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { CreateAdmin } from "@/components/admin/modalAddAdmin";
+import { DeleteAdmin } from "@/components/admin/modalDeleteAdmin";
 
 const userAdminTable = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -39,28 +15,28 @@ const userAdminTable = () => {
   const users = [
     {
       id: 1,
-      profile: "/image/rapi.jpg",
+      profile: "/image/default-user-preview.png",
       email: "john.doe@example.com",
       username: "johndoe",
       comment: "Active user since 2023"
     },
     {
       id: 2,
-      profile: "/image/rapi.jpg",
+      profile: "/image/default-user-preview.png",
       email: "sarah.smith@example.com",
       username: "sarahsmith",
       comment: "Premium member"
     },
     {
       id: 3,
-      profile: "/image/rapi.jpg",
+      profile: "/image/default-user-preview.png",
       email: "mike.jones@example.com",
       username: "mikejones",
       comment: "New user"
     },
     {
       id: 4,
-      profile: "/image/rapi.jpg",
+      profile: "/image/default-user-preview.png",
       email: "emma.wilson@example.com",
       username: "emmawilson",
       comment: "Inactive"
@@ -91,7 +67,7 @@ const userAdminTable = () => {
   //     setCurrentPage(pageNumber);
   //   };
 
-    const router = useRouter()
+  const router = useRouter()
 
   return (
     <div className="">
@@ -100,43 +76,7 @@ const userAdminTable = () => {
         <h1 className="font-semibold text-xl text-gray-800">User Admin</h1>
 
         <div className="flex gap-4">
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="outline" className='bg-green-600 hover:bg-green-700 text-white'>Add admin</Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px] bg-white z-50">
-              <DialogHeader>
-                <DialogTitle>Edit profile</DialogTitle>
-                <DialogDescription>
-                  Make changes to your profile here. Click save when you're done.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="name" className="text-right">
-                    Name
-                  </Label>
-                  <Input id="name" value="" className="col-span-3" />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="email" className="text-right">
-                    email
-                  </Label>
-                  <Input id="username" value="" className="col-span-3" />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="password" className="text-right">
-                    password
-                  </Label>
-                  <Input id="username" value="" className="col-span-3" />
-                </div>
-              </div>
-              <DialogFooter>
-                <Button type="submit" className='bg-green-600 hover:bg-green-700'>Save changes</Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-
+            <CreateAdmin />
         </div>
       </div>
 
@@ -210,7 +150,7 @@ const userAdminTable = () => {
                   <img
                     src={user.profile}
                     alt={user.username}
-                    className="h-10 w-10 rounded-full"
+                    className="h-10 w-10 rounded-full bg-gray-200"
                   />
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -229,27 +169,9 @@ const userAdminTable = () => {
                     <MdOutlineEdit size={20} className='text-orange-500' />
                     <span className='text-orange-500'>Edit</span>
                   </button>
-                  <AlertDialog>
-                    <AlertDialogTrigger className=''>
-                      <button className='text-red-500 hover:text-red-700 flex items-center space-x-1'>
-                        <MdDelete size={20} />
-                        <span>Delete</span>
-                      </button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent className='bg-white'>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Are you absolutely sure want to delete this admin account?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          This action cannot be undone. This will permanently delete this account
-                          and remove this data from our servers.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction className='bg-red-500'>Continue</AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
+
+                  <DeleteAdmin />
+
                 </td>
               </tr>
             ))}

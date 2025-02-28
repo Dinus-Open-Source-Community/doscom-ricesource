@@ -41,28 +41,28 @@ export default function userTable() {
   const users = [
     {
       id: 1,
-      profile: "/image/rapi.jpg",
+      profile: "/image/default-user-preview.png",
       email: "john.doe@example.com",
       username: "johndoe",
       comment: "Active user since 2023"
     },
     {
       id: 2,
-      profile: "/image/rapi.jpg",
+      profile: "/image/default-user-preview.png",
       email: "sarah.smith@example.com",
       username: "sarahsmith",
       comment: "Premium member"
     },
     {
       id: 3,
-      profile: "/image/rapi.jpg",
+      profile: "/image/default-user-preview.png",
       email: "mike.jones@example.com",
       username: "mikejones",
       comment: "New user"
     },
     {
       id: 4,
-      profile: "/image/rapi.jpg",
+      profile: "/image/default-user-preview.png",
       email: "emma.wilson@example.com",
       username: "emmawilson",
       comment: "Inactive"
@@ -212,7 +212,7 @@ export default function userTable() {
                   <img
                     src={user.profile}
                     alt={user.username}
-                    className="h-10 w-10 rounded-full"
+                    className="h-10 w-10 rounded-full bg-gray-200"
                   />
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -225,12 +225,15 @@ export default function userTable() {
                   {user.comment}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 flex space-x-4">
-                  <button className="text-blue-500 hover:text-blue-700 flex items-center space-x-1"
+
+                  {/* edit user */}
+                  {/* <button className="text-blue-500 hover:text-blue-700 flex items-center space-x-1"
                     onClick={() => router.push('/dashboardAdmin/users/${userId}')}
                   >
                     <MdOutlineEdit size={20} className='text-orange-500' />
                     <span className='text-orange-500'>Edit</span>
-                  </button>
+                  </button> */}
+
                   <AlertDialog>
                     <AlertDialogTrigger className=''>
                       <button className='text-red-500 hover:text-red-700 flex items-center space-x-1'>
