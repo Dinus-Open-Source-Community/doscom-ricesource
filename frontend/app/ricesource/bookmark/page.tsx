@@ -1,21 +1,26 @@
 import { Suspense } from "react";
 import BookmarkedRiceList from "@/components/bookmarked-rice-list";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getAllBookmarks } from "@/actions/bookmark";
+import { cookies } from "next/headers";
 
+// Fungsi untuk mendapatkan token dari cookies
 export default async function BookmarksPage() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value || null;
+
   return (
     <main className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-4xl font-bold mb-8">Your Bookmarked Rices</h1>
         <Suspense fallback={<BookmarksSkeleton />}>
-          <BookmarkedRiceList />
+          <BookmarkedRiceList token={token} />
         </Suspense>
       </div>
     </main>
   );
 }
 
+// Skeleton untuk loading state
 function BookmarksSkeleton() {
   return (
     <div className="space-y-6">

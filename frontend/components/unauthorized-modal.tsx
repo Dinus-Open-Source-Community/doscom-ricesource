@@ -23,7 +23,7 @@ export function AuthDialog({
 }: AuthDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className=" bg-white">
+      <DialogContent className="bg-white">
         <DialogHeader>
           <DialogTitle>Authentication Required</DialogTitle>
           <DialogDescription>

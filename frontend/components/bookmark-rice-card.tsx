@@ -62,7 +62,7 @@ export function BookmarkRiceCard({ rice }: RiceCardProps) {
           </CardContent>
         </div>
         <CardFooter className="p-0 mt-4">
-          <Link href={`/rice/${rice.id}`} className="w-full">
+          <Link href={`/ricesource/rice/${rice.id}`} className="w-full">
             <Button variant="outline" className="w-full">
               View Details
             </Button>

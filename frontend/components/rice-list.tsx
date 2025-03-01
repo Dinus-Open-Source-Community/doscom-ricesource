@@ -15,8 +15,9 @@ import LikeButton from "./like-button";
 import Search from "./search";
 import Sort from "./sort";
 import { Rice } from "@/types";
-import BookmarkButton from "./bookmark-button";
+import BookmarkButtonWrapper from "./bookmark-button-wrapper";
 import { getAllBookmarks } from "@/actions/bookmark";
+import { logout } from "@/actions/auth";
 
 interface RiceListProps {
   initialRices: Rice[];
@@ -42,7 +43,13 @@ export default function RiceList({ initialRices, token }: RiceListProps) {
         const bookmarkedIds = new Set(bookmarks.map((bm) => bm.config_id));
         setBookmarkedRices(bookmarkedIds);
         console.log(bookmarkedIds);
-      } catch (error) {
+      } catch (error: any) {
+        if (error.message === "Unauthorized") {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          await logout();
+          window.location.reload();
+        }
         console.error("Error fetching bookmarks:", error);
       }
     };
@@ -123,7 +130,7 @@ export default function RiceList({ initialRices, token }: RiceListProps) {
                   </div>
                   <div className="flex items-center space-x-2">
                     <LikeButton initialLikes={rice.like} riceId={rice.id} />
-                    <BookmarkButton
+                    <BookmarkButtonWrapper
                       riceId={rice.id}
                       variant="icon"
                       token={token}

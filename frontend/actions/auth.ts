@@ -29,3 +29,8 @@ export async function login(data: loginProps) {
 
     return response.data;
 }
+
+export async function logout() {
+    const cookieStore = await cookies();
+    cookieStore.delete("token");
+}
