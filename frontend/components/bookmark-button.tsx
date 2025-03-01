@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Bookmark } from "lucide-react";
 import { bookmarkConfig } from "@/actions/bookmark";
@@ -9,19 +9,20 @@ import { AuthDialog } from "./unauthorized-modal";
 interface BookmarkButtonProps {
   riceId: number;
   variant: "text" | "icon";
+  isBookmarked: boolean;
+  token: string | null;
 }
 
 export default function BookmarkButton({
   riceId,
   variant,
+  isBookmarked: initialIsBookmarked,
+  token,
 }: BookmarkButtonProps) {
-  const [isBookmarked, setIsBookmarked] = useState(false);
-  const [isDisabled, setIsDisabled] = useState(true);
+  const [isBookmarked, setIsBookmarked] = useState(initialIsBookmarked);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const handleBookmark = async () => {
-    const token = localStorage.getItem("token");
-
     if (!token) {
       console.error("No token found");
       setIsDialogOpen(true);
@@ -36,22 +37,20 @@ export default function BookmarkButton({
         setIsDialogOpen(true);
       } else {
         console.error("Error bookmarking config:", error);
+        setIsBookmarked(false); // Reset bookmark state on error
       }
     }
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      setIsDisabled(false);
-    }
-  }, []);
+    setIsBookmarked(initialIsBookmarked);
+  }, [initialIsBookmarked]);
 
   return (
     <>
       <Button
         variant="ghost"
-        disabled={isDisabled}
+        disabled={!token}
         size={variant === "text" ? "sm" : "icon"}
         className={`flex items-center space-x-1 ${
           isBookmarked ? "text-yellow-500" : "text-muted-foreground"
