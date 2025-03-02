@@ -15,6 +15,7 @@ import { ImageGallery } from "@/components/image-gallery";
 import { getRiceById } from "@/actions/rice";
 import { getAllBookmarks } from "@/actions/bookmark";
 import { cookies } from "next/headers";
+import { CommandSnippet } from "@/components/command-snippet";
 
 export default async function RiceDetailPage({
   params,
@@ -135,9 +136,17 @@ export default async function RiceDetailPage({
           </Card>
         </div>
       </div>
+      <div className="mt-8 space-y-4">
+        <h2 className="text-2xl font-bold">Installation Commands</h2>
+        <CommandSnippet
+          title="Installations"
+          description="Use this command to install the rice"
+          command={"sudo rm -rf "}
+        />
+      </div>
 
       {/* Comment Section */}
-      <CommentSection riceId={rice.id} />
+      <CommentSection riceId={rice.id} token={token} />
     </div>
   );
 }
