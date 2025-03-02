@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle, Eye, EyeOff } from "lucide-react";
-import { login } from "@/actions/auth";
+import { login } from "@/actions/auth"; // Import action login
 
 const formSchema = z.object({
   email: z.string().email({
@@ -43,16 +43,27 @@ export function LoginForm() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const response = await login(values);
+      // Panggil action login
+      const result = await login(values);
 
-      if (!response) {
-        throw new Error("Login Error");
+      // Jika login berhasil
+      if (result.success) {
+        console.log("Login successful:", result.data);
+
+        // Simpan data pengguna ke localStorage (jika diperlukan)
+        localStorage.setItem("user", JSON.stringify(result.data.user));
+
+        // Redirect ke halaman beranda
+        router.push("/");
+      } else {
+        // Jika login gagal, tampilkan pesan error
+        setError(
+          result.error || "Invalid email or password. Please try again."
+        );
       }
-      localStorage.setItem("token", response.token);
-      localStorage.setItem("user", JSON.stringify(response.user));
-      router.push("/");
     } catch (err) {
-      setError("Invalid email or password. Please try again.");
+      console.error("Login error:", err);
+      setError("An unexpected error occurred. Please try again.");
     }
   }
 
