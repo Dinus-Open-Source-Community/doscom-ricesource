@@ -1,5 +1,5 @@
-import { RegisterForm } from "@/components/register-form"
-import Link from "next/link"
+import { RegisterForm } from "@/components/register-form";
+import Link from "next/link";
 
 export default function RegisterPage() {
   return (
@@ -17,6 +17,5 @@ export default function RegisterPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }
-
