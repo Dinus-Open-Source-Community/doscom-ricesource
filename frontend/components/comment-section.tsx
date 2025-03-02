@@ -28,14 +28,15 @@ interface CommentData {
 
 interface CommentSectionProps {
   riceId: number;
+  token: string | null; // Tambahkan token sebagai prop
 }
 
-export default function CommentSection({ riceId }: CommentSectionProps) {
+export default function CommentSection({ riceId, token }: CommentSectionProps) {
   const [comments, setComments] = useState<CommentData[]>([]);
   const [newComment, setNewComment] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isDisabled, setIsDisabled] = useState(true);
+  const [isDisabled, setIsDisabled] = useState(!token); // Nonaktifkan jika token tidak ada
   const [isPosting, setIsPosting] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -57,20 +58,11 @@ export default function CommentSection({ riceId }: CommentSectionProps) {
     fetchComments();
   }, [riceId]);
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      setIsDisabled(false);
-    }
-  }, []);
-
   const handleSubmitComment = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsPosting(true);
     if (newComment.trim()) {
       try {
-        const token = localStorage.getItem("token");
-
         if (!token) {
           setIsDialogOpen(true);
           throw new Error("User not authenticated");
@@ -107,8 +99,6 @@ export default function CommentSection({ riceId }: CommentSectionProps) {
 
   const handleReply = async (parentId: number, content: string) => {
     try {
-      const token = localStorage.getItem("token");
-
       if (!token) {
         setIsDialogOpen(true);
         throw new Error("User not authenticated");
@@ -149,6 +139,7 @@ export default function CommentSection({ riceId }: CommentSectionProps) {
           comment={comment}
           replies={comments.filter((reply) => reply.parent_id === comment.id)}
           onReply={handleReply}
+          token={token} // Teruskan token ke komponen Comment
         />
       ));
   };
@@ -163,14 +154,6 @@ export default function CommentSection({ riceId }: CommentSectionProps) {
       </div>
     );
   }
-
-  // if (error) {
-  //   return (
-  //     <div className="mt-8 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-  //       {error}
-  //     </div>
-  //   );
-  // }
 
   return (
     <div className="mt-8">

@@ -1,4 +1,6 @@
-import { useState, useEffect, use } from "react";
+"use client";
+
+import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -22,12 +24,13 @@ interface CommentProps {
   comment: CommentData;
   replies: CommentData[];
   onReply: (parentId: number, content: string) => void;
+  token: string | null; // Tambahkan token sebagai prop
 }
 
-export function Comment({ comment, replies, onReply }: CommentProps) {
+export function Comment({ comment, replies, onReply, token }: CommentProps) {
   const [isReplying, setIsReplying] = useState(false);
   const [replyContent, setReplyContent] = useState("");
-  const [isDisabled, setIsDisabled] = useState(true);
+  const isDisabled = !token; // Nonaktifkan tombol "Reply" jika token tidak ada
 
   const handleReply = () => {
     if (replyContent.trim()) {
@@ -36,13 +39,6 @@ export function Comment({ comment, replies, onReply }: CommentProps) {
       setIsReplying(false);
     }
   };
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      setIsDisabled(false);
-    }
-  }, []);
 
   return (
     <div className="mb-4">
@@ -93,6 +89,7 @@ export function Comment({ comment, replies, onReply }: CommentProps) {
               comment={reply}
               replies={[]}
               onReply={onReply}
+              token={token} // Teruskan token ke komponen reply
             />
           ))}
         </div>
