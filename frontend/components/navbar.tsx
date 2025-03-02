@@ -127,12 +127,14 @@ export default function Navbar() {
                 </button>
               </>
             ) : (
-              <Link
-                href="/login"
-                className="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium border-transparent text-muted-foreground hover:border-muted-foreground hover:text-foreground"
-              >
-                Login
-              </Link>
+              <div className="hidden sm:ml-6 sm:flex sm:items-center">
+                <Link href="/login">
+                  <Button variant="ghost">Login</Button>
+                </Link>
+                <Link href="/register">
+                  <Button>Register</Button>
+                </Link>
+              </div>
             )}
           </div>
           <div className="flex items-center sm:hidden">
