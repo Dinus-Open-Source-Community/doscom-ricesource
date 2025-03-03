@@ -139,9 +139,12 @@ export default async function RiceDetailPage({
       <div className="mt-8 space-y-4">
         <h2 className="text-2xl font-bold">Installation Commands</h2>
         <CommandSnippet
-          title="Installations"
-          description="Use this command to install the rice"
-          command={"sudo rm -rf "}
+          title="Update and Clean System"
+          description="Commands to update and clean your system."
+          command={`# Update all packages
+sudo pacman -Syu
+# Remove unused packages
+sudo pacman -Rns $(pacman -Qdtq)`}
         />
       </div>
 
