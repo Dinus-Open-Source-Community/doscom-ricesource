@@ -1,0 +1,198 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "UserAuth & Like API",
+    "description": "Collection untuk testing register user, login user, dan toggle like",
+    "version": "1.0.0"
+  },
+  "components":{
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "Bearer",
+        "bearerFormat": "jwt"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000"
+    }
+  ],
+  "paths": {
+    "/api/userauth/register": {
+      "post": {
+        "tags": [
+          "default"
+        ],
+        "summary": "Register User",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "example": "testuser"
+                  },
+                  "email": {
+                    "type": "string",
+                    "example": "testuser@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "password123"
+                  },
+                  "avatar": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/userauth/login": {
+      "post": {
+        "tags": [
+          "default"
+        ],
+        "summary": "Logou User",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties":{
+                  "email":{
+                    "type": "string",
+                    "example":"testuser@example.com"
+                  },
+                  "password":{
+                    "type":"string",
+                    "example":"password123"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "multipart/form-data"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/config/{id}/like": {
+      "post": {
+        "tags": ["default"],
+        "summary": "Toggle Like on Config",
+        "security":[
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "*/*": {
+              "schema": {
+                "type": "string",
+                "example": "\"\""
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "requireq": true,
+            "schema": {
+              "type": "integer"
+            },
+            "example": 1
+          },          
+          {
+            "name": "Authorization",
+            "in": "header",            
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer {{token}}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/config/{id}/likes": {
+      "get":{
+        "tags":["default"],
+        "summary": "Get list Like of config",
+        "security":[
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters":[
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema":{
+              "type": "integer"
+            },
+            "example": 1
+          },
+          {
+            "name": "Authorization",
+            "in": "header",            
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer {{token}}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    }
+  }
+}
