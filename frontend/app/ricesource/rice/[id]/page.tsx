@@ -10,9 +10,12 @@ import {
 } from "@/components/ui/card";
 import LikeButton from "@/components/like-button";
 import CommentSection from "@/components/comment-section";
-import BookmarkButton from "@/components/bookmark-button";
+import BookmarkButtonWrapper from "@/components/bookmark-button-wrapper";
 import { ImageGallery } from "@/components/image-gallery";
 import { getRiceById } from "@/actions/rice";
+import { getAllBookmarks } from "@/actions/bookmark";
+import { cookies } from "next/headers";
+import { CommandSnippet } from "@/components/command-snippet";
 
 export default async function RiceDetailPage({
   params,
@@ -24,6 +27,23 @@ export default async function RiceDetailPage({
 
   if (!rice) {
     notFound();
+  }
+
+  // Ambil token dari cookies
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value || null;
+
+  // Ambil data bookmark
+  let isBookmarked = false;
+  if (token) {
+    try {
+      const bookmarks = await getAllBookmarks(token);
+      isBookmarked = bookmarks.some(
+        (bookmark) => bookmark.config_id === rice.id
+      );
+    } catch (error) {
+      console.error("Error fetching bookmarks:", error);
+    }
   }
 
   return (
@@ -106,14 +126,30 @@ export default async function RiceDetailPage({
             </CardContent>
             <CardFooter className="flex justify-between items-center">
               <LikeButton initialLikes={rice.like} riceId={rice.id} />
-              <BookmarkButton riceId={rice.id} variant="text" />
+              <BookmarkButtonWrapper
+                riceId={rice.id}
+                variant="text"
+                isBookmarked={isBookmarked}
+                token={token}
+              />
             </CardFooter>
           </Card>
         </div>
       </div>
+      <div className="mt-8 space-y-4">
+        <h2 className="text-2xl font-bold">Installation Commands</h2>
+        <CommandSnippet
+          title="Update and Clean System"
+          description="Commands to update and clean your system."
+          command={`# Update all packages
+sudo pacman -Syu
+# Remove unused packages
+sudo pacman -Rns $(pacman -Qdtq)`}
+        />
+      </div>
 
       {/* Comment Section */}
-      <CommentSection riceId={rice.id} />
+      <CommentSection riceId={rice.id} token={token} />
     </div>
   );
 }

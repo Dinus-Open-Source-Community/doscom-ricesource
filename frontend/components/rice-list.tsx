@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -15,24 +15,50 @@ import LikeButton from "./like-button";
 import Search from "./search";
 import Sort from "./sort";
 import { Rice } from "@/types";
-import BookmarkButton from "./bookmark-button";
+import BookmarkButtonWrapper from "./bookmark-button-wrapper";
+import { getAllBookmarks } from "@/actions/bookmark";
+import { logout } from "@/actions/auth";
 
 interface RiceListProps {
   initialRices: Rice[];
+  token: string | null;
 }
 
-export default function RiceList({ initialRices }: RiceListProps) {
+export default function RiceList({ initialRices, token }: RiceListProps) {
   const [rices, setRices] = useState(initialRices);
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("newest");
   const [page, setPage] = useState(1);
+  const [bookmarkedRices, setBookmarkedRices] = useState<Set<number>>(
+    new Set()
+  );
   const perPage = 4;
 
+  useEffect(() => {
+    const fetchBookmarks = async () => {
+      if (!token) return; // Skip if no token
+
+      try {
+        const bookmarks = await getAllBookmarks(token);
+        const bookmarkedIds = new Set(bookmarks.map((bm) => bm.config_id));
+        setBookmarkedRices(bookmarkedIds);
+        console.log(bookmarkedIds);
+      } catch (error: any) {
+        if (error.message === "Unauthorized") {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          await logout();
+          window.location.reload();
+        }
+        console.error("Error fetching bookmarks:", error);
+      }
+    };
+
+    fetchBookmarks();
+  }, [token]);
+
   const filteredRices = rices
-    .filter(
-      (rice) => rice.judul.toLowerCase().includes(search.toLowerCase())
-      // || rice.de.toLowerCase().includes(search.toLowerCase())
-    )
+    .filter((rice) => rice.judul.toLowerCase().includes(search.toLowerCase()))
     .sort((a, b) => {
       if (sort === "oldest") return a.id - b.id;
       if (sort === "most_liked") return b.like - a.like;
@@ -63,7 +89,6 @@ export default function RiceList({ initialRices }: RiceListProps) {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {paginatedRices.map((rice) => {
-          // Ensure image_url is properly parsed
           const images: string[] =
             typeof rice.image_url === "string"
               ? JSON.parse(rice.image_url)
@@ -77,7 +102,7 @@ export default function RiceList({ initialRices }: RiceListProps) {
               <CardContent>
                 {Array.isArray(images) && images.length > 0 ? (
                   <Image
-                    src={images[0]} // Show only the first image
+                    src={images[0]}
                     alt={rice.judul}
                     width={300}
                     height={200}
@@ -105,7 +130,12 @@ export default function RiceList({ initialRices }: RiceListProps) {
                   </div>
                   <div className="flex items-center space-x-2">
                     <LikeButton initialLikes={rice.like} riceId={rice.id} />
-                    <BookmarkButton riceId={rice.id} variant="icon" />
+                    <BookmarkButtonWrapper
+                      riceId={rice.id}
+                      variant="icon"
+                      token={token}
+                      isBookmarked={bookmarkedRices.has(rice.id)} // Pass isBookmarked prop
+                    />
                   </div>
                 </div>
                 <Link href={`/ricesource/rice/${rice.id}`} className="w-full">

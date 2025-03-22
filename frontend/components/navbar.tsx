@@ -8,11 +8,13 @@ import { Button } from "@/components/ui/button";
 import { getUser } from "@/actions/user";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { User } from "@/types";
+import { logout } from "@/actions/auth";
 
 const navItems = [
   { name: "Home", href: "/ricesource" },
   { name: "About", href: "/ricesource/about" },
   { name: "Explore", href: "/ricesource/explore" },
+  { name: "Bookmark", href: "/ricesource/bookmark" },
 ];
 
 export default function Navbar() {
@@ -49,6 +51,15 @@ export default function Navbar() {
       setError("No user data found in localStorage");
       setLoading(false);
     }
+  };
+
+  const handleLogout = async () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setToken(null);
+    setUser(null);
+    await logout();
+    window.location.reload();
   };
 
   useEffect(() => {
@@ -91,20 +102,38 @@ export default function Navbar() {
                 {item.name}
               </Link>
             ))}
-            {user && (
-              <div className=" flex items-center space-x-4">
-                <Avatar>
-                  <AvatarImage
-                    src={user.avatar || "/account.svg"} // Fallback to a default avatar
-                    alt={user.username}
-                  />
-                  <AvatarFallback>
-                    {user.username?.charAt(0).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <span className="font-semibold capitalize text-md">
-                  {user.username}
-                </span>
+            {user ? (
+              <>
+                <div className=" flex items-center space-x-4">
+                  <Avatar>
+                    <AvatarImage
+                      src={user.avatar || "/account.svg"} // Fallback to a default avatar
+                      alt={user.username}
+                    />
+                    <AvatarFallback>
+                      {user.username?.charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="font-semibold capitalize text-md">
+                    {user.username}
+                  </span>
+                </div>
+                <button
+                  onClick={handleLogout}
+                  className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium border-transparent text-muted-foreground hover:border-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <div className="hidden sm:ml-6 sm:flex sm:items-center">
+                <Link href="/login">
+                  <Button variant="ghost">Login</Button>
+                </Link>
+                <Link href="/register">
+                  <Button>Register</Button>
+                </Link>
               </div>
             )}
           </div>
@@ -143,14 +172,16 @@ export default function Navbar() {
               </Link>
             ))}
             {user && (
-              <div className="pl-3 pr-4 py-2">
-                <Avatar>
-                  <AvatarImage src={user.avatar} alt={user.username} />
-                  <AvatarFallback>
-                    {user.username?.charAt(0).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-              </div>
+              <>
+                <div className="pl-3 pr-4 py-2">
+                  <Avatar>
+                    <AvatarImage src={user.avatar} alt={user.username} />
+                    <AvatarFallback>
+                      {user.username?.charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                </div>
+              </>
             )}
           </div>
         </div>
