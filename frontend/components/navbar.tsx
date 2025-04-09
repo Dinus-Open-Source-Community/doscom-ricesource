@@ -93,17 +93,25 @@ export default function Navbar() {
               <Link
                 key={item.name}
                 href={item.href}
-                className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${
-                  pathname === item.href
-                    ? "border-primary text-primary"
-                    : "border-transparent text-muted-foreground hover:border-muted-foreground hover:text-foreground"
-                }`}
+                className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${pathname === item.href
+                  ? "border-primary text-primary"
+                  : "border-transparent text-muted-foreground hover:border-muted-foreground hover:text-foreground"
+                  }`}
               >
                 {item.name}
               </Link>
             ))}
             {user ? (
               <>
+                <Link
+                  href="/ricesource/manage"
+                  className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${pathname === "/ricesource/manage"
+                    ? "border-primary text-primary"
+                    : "border-transparent text-muted-foreground hover:border-muted-foreground hover:text-foreground"
+                    }`}
+                >
+                  Manage
+                </Link>
                 <div className=" flex items-center space-x-4">
                   <Avatar>
                     <AvatarImage
@@ -161,11 +169,10 @@ export default function Navbar() {
               <Link
                 key={item.name}
                 href={item.href}
-                className={`block pl-3 pr-4 py-2 border-l-4 text-base font-medium ${
-                  pathname === item.href
-                    ? "bg-primary/10 border-primary text-primary"
-                    : "border-transparent text-muted-foreground hover:bg-muted hover:border-muted-foreground hover:text-foreground"
-                }`}
+                className={`block pl-3 pr-4 py-2 border-l-4 text-base font-medium ${pathname === item.href
+                  ? "bg-primary/10 border-primary text-primary"
+                  : "border-transparent text-muted-foreground hover:bg-muted hover:border-muted-foreground hover:text-foreground"
+                  }`}
                 onClick={() => setIsOpen(false)}
               >
                 {item.name}
