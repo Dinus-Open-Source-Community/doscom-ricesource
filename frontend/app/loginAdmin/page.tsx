@@ -3,110 +3,156 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { adminLogin } from "@/actions/authAdmin";
+import type { Metadata } from "next"
+import Link from "next/link"
+import { Mail, AlertCircle } from "lucide-react"
+
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { PasswordInput } from "@/components/admin/password-input";
+import { Alert, AlertDescription } from "@/components/ui/alert"
 
 export default function LoginPage() {
   const router = useRouter();
-  const [passwordVisible, setPasswordVisible] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(false);
+  const [errors, setErrors] = useState<{
+    email?: string
+    password?: string
+    general?: string
+  }>({})
+  const [isLoading, setIsLoading] = useState(false)
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsLoading(true)
+    setErrors({})
+
+    // Validate inputs
+    const newErrors: {
+      email?: string
+      password?: string
+      general?: string
+    } = {}
+
+    if (!email) {
+      newErrors.email = "Email is required"
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      newErrors.email = "Please enter a valid email address"
+    }
+
+    if (!password) {
+      newErrors.password = "Password is required"
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors)
+      setIsLoading(false)
+      return
+    }
 
     try {
-      const response = await adminLogin({ email, password })
+      const response = await adminLogin({ email, password });
 
-      if (!response) {
-        setError(true);
+      // Simulate delay (optional, for smoother UX like v0 demo)
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      if (!response || !response.token) {
+        setErrors({
+          general: "Invalid email or password. Please try again.",
+        });
         return;
       }
 
       localStorage.setItem("token", response.token);
       router.push("/dashboardAdmin");
     } catch (err) {
-      setError(true);
+      setErrors({
+        general: "An unexpected error occurred. Please try again later.",
+      });
+    } finally {
+      setIsLoading(false);
     }
-  };
+  }
 
-
-  const togglePasswordVisibility = () => {
-    setPasswordVisible(!passwordVisible);
-  };
 
   return (
-    <section className="bg-gray-100 flex min-h-screen items-center justify-center flex-wrap shadow-md">
-      <div className="max-w-5xl w-full rounded-3xl shadow bg-[url('/image/placeholder-card.png')] p-4 h-full flex gap-4 bg-cover bg-center">
-        <div className="">
-          <p className="text-white">Admin</p>
-        </div>
-        <div className="bg-gray-100 p-24 rounded-lg w-1/2 text-center ml-auto">
-          <div className="w-full max-w-md dark:bg-gray-800 dark:border-gray-700 p-6">
-            <div className="flex items-center justify-center pb-5">
-              <img src="Group.svg" className="w-14" alt="" />
-            </div>
-            <h1 className="text-xl font-bold leading-tight tracking-tight text-black md:text-2xl dark:text-black mb-6 text-center whitespace-nowrap">
-              Sign in to your account
-            </h1>
-            {error && <p className="text-red-500">{error}</p>}
-            <form className="space-y-4" onSubmit={handleSubmit}>
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block mb-2 text-sm font-medium text-black dark:text-black text-left"
-                >
-                  Your email
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  className="bg-blackGray border border-gray-300 text-black text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black"
-                  placeholder="name@company.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-                {error && <p className="text-red-500">Enter Valid Email</p>}
-              </div>
-              <div className="relative">
-                <label
-                  htmlFor="password"
-                  className="block mb-2 text-sm font-medium text-black dark:text-black text-left"
-                >
-                  Password
-                </label>
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
+      <Card className="w-full max-w-md">
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-2xl font-bold text-center">Login</CardTitle>
+          <CardDescription className="text-center">
+            Enter your email and password to login to your account
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {errors.general && (
+            <Alert variant="destructive" className="mb-4">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{errors.general}</AlertDescription>
+            </Alert>
+          )}
+          <form onSubmit={handleSubmit}>
+            <div className="grid gap-6 sm:gap-5"> {/* Overall form spacing */}
+              {/* Email Field */}
+              <div className="grid gap-2">
+                <Label htmlFor="email" className={errors.email ? "text-destructive" : ""}>
+                  Email
+                </Label>
                 <div className="relative">
-                  <input
-                    type={passwordVisible ? "text" : "password"}
-                    id="password"
-                    className="bg-blackGray border border-gray-300 text-black text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black pr-10"
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                  <Mail
+                    className={`absolute left-3 top-3 h-4 w-4 ${errors.email ? "text-destructive" : "text-muted-foreground"
+                      }`}
+                  />
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="name@example.com"
+                    className={`pl-10 ${errors.email ? "border-destructive focus-visible:ring-destructive" : ""}`}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     required
                   />
-                  {error && <p className="text-red-500">Enter Valid Email</p>}
-
-                  <img
-                    src={passwordVisible ? "/close-eye.svg" : "/open-eye.svg"}
-                    alt="Toggle Visibility"
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
-                    onClick={togglePasswordVisibility}
-                  />
                 </div>
+                {errors.email && (
+                  <p className="text-sm font-medium text-destructive">{errors.email}</p>
+                )}
               </div>
 
-              <button
-                type="submit"
+              {/* Password Field */}
+              <div className="grid gap-2">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="password" className={errors.password ? "text-destructive" : ""}>
+                    Password
+                  </Label>
+                </div>
+                <PasswordInput
+                  id="password"
+                  onChange={(e) => setPassword(e.target.value)}
+                  hasError={!!errors.password}
+                  required
+                />
+                {errors.password && (
+                  <p className="text-sm font-medium text-destructive">{errors.password}</p>
+                )}
+              </div>
 
-                className="w-full text-black bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-full text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-              >
-                Sign in
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </section>
+              {/* Submit Button */}
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? "Logging in..." : "Login"}
+              </Button>
+
+              {/* Optional: Global error display */}
+              {errors.general && (
+                <p className="text-center text-sm font-medium text-destructive">{errors.general}</p>
+              )}
+            </div>
+          </form>
+
+        </CardContent>
+      </Card>
+    </div>
   );
 }
