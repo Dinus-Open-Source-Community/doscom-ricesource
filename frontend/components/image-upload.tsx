@@ -1,35 +1,51 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect } from "react"
 import { useDropzone } from "react-dropzone"
-import { ImagePlus, Trash2, X } from "lucide-react"
+import { ImagePlus, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 interface ImageUploadProps {
-    value: string[]
-    onChange: (value: string[]) => void
+    value: (File | string)[]
+    onChange: (files: (File | string)[]) => void
     maxFiles?: number
 }
 
 export function ImageUpload({ value = [], onChange, maxFiles = 5 }: ImageUploadProps) {
     const [isUploading, setIsUploading] = useState(false)
+    const [previewUrls, setPreviewUrls] = useState<string[]>([])
 
-    const onDrop = useCallback(async (acceptedFiles: File[]) => {
+    // Create preview URLs and clean up
+    useEffect(() => {
+        const urls: string[] = []
+        value.forEach(item => {
+            if (typeof item === 'string') {
+                urls.push(item)
+            } else {
+                urls.push(URL.createObjectURL(item))
+            }
+        })
+        setPreviewUrls(urls)
+
+        return () => {
+            // Clean up object URLs
+            urls.forEach(url => {
+                if (url.startsWith('blob:')) {
+                    URL.revokeObjectURL(url)
+                }
+            })
+        }
+    }, [value])
+
+    const onDrop = useCallback((acceptedFiles: File[]) => {
         if (value.length + acceptedFiles.length > maxFiles) {
             alert(`You can only upload up to ${maxFiles} images`)
             return
         }
 
         setIsUploading(true)
-
         try {
-            // In a real app, you would upload the files to your server here
-            // For demo purposes, we'll just create object URLs
-            const newImages = acceptedFiles.map(file => URL.createObjectURL(file))
-
-            onChange([...value, ...newImages])
-        } catch (error) {
-            console.error("Error uploading images:", error)
+            onChange([...value, ...acceptedFiles])
         } finally {
             setIsUploading(false)
         }
@@ -45,20 +61,20 @@ export function ImageUpload({ value = [], onChange, maxFiles = 5 }: ImageUploadP
     })
 
     const removeImage = (index: number) => {
-        const newImages = [...value]
-        newImages.splice(index, 1)
-        onChange(newImages)
+        const newFiles = [...value]
+        newFiles.splice(index, 1)
+        onChange(newFiles)
     }
 
     return (
         <div className="space-y-4">
             {value.length > 0 && (
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                    {value.map((url, index) => (
+                    {previewUrls.map((url, index) => (
                         <div key={url} className="relative aspect-video rounded-md overflow-hidden">
                             <img
                                 src={url}
-                                alt={`Uploaded image ${index + 1}`}
+                                alt={`Preview ${index + 1}`}
                                 className="object-cover w-full h-full"
                             />
                             <Button
@@ -70,6 +86,18 @@ export function ImageUpload({ value = [], onChange, maxFiles = 5 }: ImageUploadP
                             >
                                 <Trash2 className="h-3 w-3" />
                             </Button>
+                            <div className="absolute bottom-0 left-0 right-0 bg-black/50 p-1">
+                                <p className="text-xs text-white truncate">
+                                    {typeof value[index] === 'string'
+                                        ? 'Uploaded image'
+                                        : (value[index] as File).name}
+                                </p>
+                                <p className="text-xs text-white">
+                                    {typeof value[index] !== 'string'
+                                        ? `${((value[index] as File).size / 1024).toFixed(1)} KB`
+                                        : ''}
+                                </p>
+                            </div>
                         </div>
                     ))}
                 </div>
@@ -93,7 +121,7 @@ export function ImageUpload({ value = [], onChange, maxFiles = 5 }: ImageUploadP
                             {maxFiles - value.length} of {maxFiles} remaining
                         </p>
                         {isUploading && (
-                            <p className="text-xs text-muted-foreground">Uploading...</p>
+                            <p className="text-xs text-muted-foreground">Processing images...</p>
                         )}
                     </div>
                 </div>

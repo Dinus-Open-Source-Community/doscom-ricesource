@@ -18,6 +18,7 @@ import {
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { useToast } from "@/hooks/use-toast"
+import { deleteRice } from "@/actions/rice"
 
 interface Rice {
     id: number;
@@ -39,13 +40,15 @@ interface Rice {
 
 interface ManageRiceListProps {
     rices: Rice[]
+    token: string | null; // Add token prop
 }
 
-export default function ManageRiceList({ rices }: ManageRiceListProps) {
+export default function ManageRiceList({ rices, token }: ManageRiceListProps) {
     const [userRices, setUserRices] = useState(rices)
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
     const [riceToDelete, setRiceToDelete] = useState<number | null>(null)
     const [page, setPage] = useState(1)
+    const [isDeleting, setIsDeleting] = useState(false)
     const { toast } = useToast()
 
     const perPage = 4
@@ -58,24 +61,35 @@ export default function ManageRiceList({ rices }: ManageRiceListProps) {
     const handleDelete = async () => {
         if (riceToDelete === null) return
 
+        setIsDeleting(true)
         try {
-            // In a real app, you would make an API call here
-            // await fetch(`/api/rice/${riceToDelete}`, { method: 'DELETE' })
+            // check if token is available
+            if (!token) {
+                return;
+            }
+            await deleteRice(String(riceToDelete), token)
 
-            // For now, we'll just update the state
+            // Update local state after successful deletion
             setUserRices(userRices.filter((rice) => rice.id !== riceToDelete))
 
             toast({
-                title: "Rice deleted",
-                description: "Your rice configuration has been deleted successfully.",
+                title: "Success",
+                description: "Rice configuration deleted successfully.",
             })
+
+            // Reset pagination if needed
+            if (paginatedRices.length === 1 && page > 1) {
+                setPage(page - 1)
+            }
         } catch (error) {
+            console.error("Delete error:", error)
             toast({
                 title: "Error",
                 description: "Failed to delete rice configuration. Please try again.",
                 variant: "destructive",
             })
         } finally {
+            setIsDeleting(false)
             setDeleteDialogOpen(false)
             setRiceToDelete(null)
         }
@@ -134,13 +148,13 @@ export default function ManageRiceList({ rices }: ManageRiceListProps) {
                                         </div>
                                     </div>
                                     <div className="flex flex-wrap items-center gap-2">
-                                        <Link href={`/rice/${rice.id}`}>
+                                        <Link href={`/ricesource/rice/${rice.id}`}>
                                             <Button variant="outline" size="sm" className="gap-1">
                                                 <ExternalLink className="h-4 w-4" />
                                                 View
                                             </Button>
                                         </Link>
-                                        <Link href={`/edit-rice/${rice.id}`}>
+                                        <Link href={`/ricesource/manage/edit-rice/${rice.id}`}>
                                             <Button variant="outline" size="sm" className="gap-1">
                                                 <Edit className="h-4 w-4" />
                                                 Edit
@@ -179,7 +193,7 @@ export default function ManageRiceList({ rices }: ManageRiceListProps) {
             )}
 
             <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-                <AlertDialogContent>
+                <AlertDialogContent className="bg-white">
                     <AlertDialogHeader>
                         <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                         <AlertDialogDescription>
@@ -188,9 +202,13 @@ export default function ManageRiceList({ rices }: ManageRiceListProps) {
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground">
-                            Delete
+                        <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={handleDelete}
+                            className="bg-destructive text-destructive-foreground"
+                            disabled={isDeleting}
+                        >
+                            {isDeleting ? "Deleting..." : "Delete"}
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
