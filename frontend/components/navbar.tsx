@@ -14,7 +14,6 @@ const navItems = [
   { name: "Home", href: "/ricesource" },
   { name: "About", href: "/ricesource/about" },
   { name: "Explore", href: "/ricesource/explore" },
-  { name: "Bookmark", href: "/ricesource/bookmark" },
 ];
 
 export default function Navbar() {
@@ -104,6 +103,15 @@ export default function Navbar() {
             {user ? (
               <>
                 <Link
+                  href="/ricesource/bookmark"
+                  className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${pathname === "/ricesource/bookmark"
+                    ? "border-primary text-primary"
+                    : "border-transparent text-muted-foreground hover:border-muted-foreground hover:text-foreground"
+                    }`}
+                >
+                  Bookmark
+                </Link>
+                <Link
                   href="/ricesource/manage"
                   className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${pathname === "/ricesource/manage"
                     ? "border-primary text-primary"
@@ -112,6 +120,7 @@ export default function Navbar() {
                 >
                   Manage
                 </Link>
+
                 <div className=" flex items-center space-x-4">
                   <Avatar>
                     <AvatarImage
