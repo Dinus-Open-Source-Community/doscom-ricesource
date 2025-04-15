@@ -46,9 +46,8 @@ export default function BookmarkButton({
       variant="ghost"
       disabled={!token}
       size={variant === "text" ? "sm" : "icon"}
-      className={`flex items-center space-x-1 ${
-        isBookmarked ? "text-yellow-500" : "text-muted-foreground"
-      }`}
+      className={`flex items-center space-x-1 ${isBookmarked ? "text-yellow-500" : "text-muted-foreground"
+        }`}
       onClick={handleBookmark}
     >
       <Bookmark className={`w-4 h-4 ${isBookmarked ? "fill-current" : ""}`} />

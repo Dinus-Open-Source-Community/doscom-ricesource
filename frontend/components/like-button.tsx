@@ -9,66 +9,59 @@ import { AuthDialog } from "./unauthorized-modal";
 interface LikeButtonProps {
   initialLikes: number;
   riceId: number;
-  initialIsLiked?: boolean; // Add an optional prop to initialize the liked state
+  initialIsLiked?: boolean;
+  token: string | null;
 }
 
 export default function LikeButton({
   initialLikes,
   riceId,
-  initialIsLiked = false, // Default to false if not provided
+  initialIsLiked = false,
+  token,
 }: LikeButtonProps) {
   const [likes, setLikes] = useState(initialLikes);
   const [isLiked, setIsLiked] = useState(initialIsLiked);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false); // Add loading state to prevent multiple clicks
-  const [disable, setDisable] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleLike = async () => {
-    const token = localStorage.getItem("token");
+  // Derive disabled state from token presence and loading state
+  const isDisabled = !token || isLoading;
 
+  const handleLike = async () => {
     if (!token) {
-      console.error("No token found");
       setIsDialogOpen(true);
       return;
     }
 
-    setIsLoading(true); // Disable the button while the request is in progress
+    setIsLoading(true);
+    setError(null);
 
     try {
+      await likeConfig(riceId.toString(), token);
       if (isLiked) {
-        await likeConfig(riceId.toString(), token);
-        setLikes((prevLikes) => prevLikes - 1); // Use a functional update for consistency
+        setLikes(prev => prev - 1);
       } else {
-        await likeConfig(riceId.toString(), token);
-        setLikes((prevLikes) => prevLikes + 1); // Use a functional update for consistency
+        setLikes(prev => prev + 1);
       }
-      setIsLiked((prevIsLiked) => !prevIsLiked); // Toggle the liked state
+      setIsLiked(prev => !prev);
     } catch (error) {
       setIsDialogOpen(true);
       setError("Failed to like the config");
       console.error("Error liking the config:", error);
     } finally {
-      setIsLoading(false); // Re-enable the button after the request completes
+      setIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      setDisable(false);
-    }
-  }, []);
 
   return (
     <>
       <Button
         variant="ghost"
         size="sm"
-        disabled={disable || isLoading} // Disable button if loading or no token
-        className={`flex items-center space-x-1 ${
-          isLiked ? "text-red-500" : "text-muted-foreground"
-        }`}
+        disabled={isDisabled}
+        className={`flex items-center space-x-1 ${isLiked ? "text-red-500" : "text-muted-foreground"
+          }`}
         onClick={handleLike}
       >
         <Heart className={`w-4 h-4 ${isLiked ? "fill-current" : ""}`} />
