@@ -43,3 +43,10 @@ export interface Bookmark {
   created_at: string;
   config: Rice;
 }
+
+export interface ApiResponse<T = any> {
+  success: boolean;
+  message?: string;
+  data?: T;
+  errors?: Record<string, string[]>;
+}
