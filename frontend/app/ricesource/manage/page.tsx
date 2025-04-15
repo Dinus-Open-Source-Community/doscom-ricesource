@@ -3,13 +3,18 @@ import { Suspense } from "react"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import Link from "next/link"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Tabs, TabsContent } from "@/components/ui/tabs"
 import { Skeleton } from "@/components/ui/skeleton"
 import { getAllRices } from "@/actions/rice"
 import ManageRiceList from "@/components/manage-rice-list"
+import { cookies } from "next/headers";
 
 export default async function ManagePage() {
+
+    const cookieStore = await cookies(); // Correctly get cookies
     const userRices = await getAllRices()
+    const token = cookieStore.get("token")?.value || null; // Correctly get token from cookies
+
 
     return (
         <main className="min-h-screen bg-background">
@@ -19,7 +24,7 @@ export default async function ManagePage() {
                         <h1 className="text-3xl font-bold">Manage Your Rices</h1>
                         <p className="text-muted-foreground mt-1">View, edit, and manage your rice configurations</p>
                     </div>
-                    <Link href="/submit">
+                    <Link href="/ricesource/manage/add-rice">
                         <Button className="gap-2">
                             <Plus className="h-4 w-4" />
                             Add New Rice
@@ -31,7 +36,7 @@ export default async function ManagePage() {
 
                     <TabsContent value="all">
                         <Suspense fallback={<RiceListSkeleton />}>
-                            <ManageRiceList rices={userRices} />
+                            <ManageRiceList rices={userRices} token={token} />
                         </Suspense>
                     </TabsContent>
 
