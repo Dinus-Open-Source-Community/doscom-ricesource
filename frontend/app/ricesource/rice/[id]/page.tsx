@@ -125,7 +125,7 @@ export default async function RiceDetailPage({
               )}
             </CardContent>
             <CardFooter className="flex justify-between items-center">
-              <LikeButton initialLikes={rice.like} riceId={rice.id} />
+              <LikeButton initialLikes={rice.like} riceId={rice.id} token={token} />
               <BookmarkButtonWrapper
                 riceId={rice.id}
                 variant="text"

@@ -36,7 +36,7 @@ export default function RiceList({ initialRices, token }: RiceListProps) {
 
   useEffect(() => {
     const fetchBookmarks = async () => {
-      if (!token) return; // Skip if no token
+      if (!token) return;
 
       try {
         const bookmarks = await getAllBookmarks(token);
@@ -129,7 +129,7 @@ export default function RiceList({ initialRices, token }: RiceListProps) {
                     </p>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <LikeButton initialLikes={rice.like} riceId={rice.id} />
+                    <LikeButton initialLikes={rice.like} riceId={rice.id} token={token} />
                     <BookmarkButtonWrapper
                       riceId={rice.id}
                       variant="icon"
