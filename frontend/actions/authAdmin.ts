@@ -1,17 +1,17 @@
 import axios from "axios";
 
-const URL = `${process.env.NEXT_PUBLIC_API_URL}`;
+const URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"; // Fallback for development
 
 interface adminLoginProbs {
     email : string;
     password : string;
 }
 
-interface adminRegisterProbs {
-    username: String;
+export interface adminRegisterProbs {
+    username: string;
     email: string;
-    password: String;
-    token: String;
+    password: string;
+    token: string;
 }
 
 export interface Admin {
@@ -22,6 +22,20 @@ export interface Admin {
 export async function adminLogin(data:adminLoginProbs) {
     const response = await axios.post(`${URL}/auth/login`, data);
     return response.data
+}
+
+export async function adminRegister(data: adminRegisterProbs) {
+    const token = localStorage.getItem('token');
+    if (!token) {
+        console.error('No token found in localStorage');
+        return;
+    }
+    const response = await axios.post(`${URL}/admins`, data, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+    return response.data;
 }
 
 export async function fetchAdminData(params?: Partial<Admin>) {
@@ -39,6 +53,11 @@ export async function fetchAdminData(params?: Partial<Admin>) {
     console.log(response.data)
     return response.data
 }
+
+
+
+
+
 
 
 

@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input"
 import { X, Trash, Download, Plus } from "lucide-react"
 import { DeleteConfirmationDialog } from "./delete-confirmation-dialog"
 import { AddUserDialog } from "./addUserDialog"
+import { fetchAdminData, adminRegister, Admin } from '@/actions/authAdmin';
+
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>
@@ -16,6 +18,22 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
   const selectedRows = table.getFilteredSelectedRowModel().rows
   const [showBulkDeleteDialog, setShowBulkDeleteDialog] = React.useState(false)
   const [showAddModal, setShowAddModal] = React.useState(false)
+
+  const [admins, setAdmins] = React.useState<Admin[]>([]);
+
+
+  const handleAddUser = async (formData: { username: string; email: string; password: string }) => {
+    try {
+      const newAdmin = await adminRegister({
+        ...formData,
+        token: "your-token-if-required" // Ensure you pass any required value
+      });
+      // Update the admin list if needed
+      setAdmins((prev) => [...prev, newAdmin]);
+    } catch (error) {
+      console.error('Failed to register admin:', error);
+    }
+  };
 
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -80,10 +98,7 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
       <AddUserDialog
         open={showAddModal}
         onOpenChange={setShowAddModal}
-        onSubmit={(data) => {
-          console.log("New user:", data)
-          // TODO: Tambahkan API call di sini
-        }}
+        onSubmit={handleAddUser}
       />
     </div>
   )

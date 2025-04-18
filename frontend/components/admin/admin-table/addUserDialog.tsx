@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
 
+import { adminRegisterProbs } from "@/actions/authAdmin"
+
 interface AddUserDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
@@ -24,10 +26,11 @@ export function AddUserDialog({ open, onOpenChange, onSubmit }: AddUserDialogPro
     setFormData({ username: "", email: "", password: "" })
     onOpenChange(false)
   }
+  
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-md bg-white">
         <DialogHeader>
           <DialogTitle>Add New User</DialogTitle>
         </DialogHeader>
