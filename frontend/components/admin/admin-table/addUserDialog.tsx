@@ -9,19 +9,19 @@ import { useState } from "react"
 interface AddUserDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  onSubmit: (data: { name: string; email: string; password: string }) => void
+  onSubmit: (data: { username: string; email: string; password: string }) => void
 }
 
 export function AddUserDialog({ open, onOpenChange, onSubmit }: AddUserDialogProps) {
   const [formData, setFormData] = useState({
-    name: "",
+    username: "",
     email: "",
     password: ""
   })
 
   const handleSave = () => {
     onSubmit(formData)
-    setFormData({ name: "", email: "", password: "" })
+    setFormData({ username: "", email: "", password: "" })
     onOpenChange(false)
   }
 
@@ -34,11 +34,11 @@ export function AddUserDialog({ open, onOpenChange, onSubmit }: AddUserDialogPro
 
         <div className="grid gap-4 py-2">
           <div className="grid gap-2">
-            <Label>Name</Label>
+            <Label>Username</Label>
             <Input
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="Enter name"
+              value={formData.username}
+              onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+              placeholder="Enter username"
             />
           </div>
           <div className="grid gap-2">

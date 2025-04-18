@@ -11,12 +11,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { ArrowUpDown, MoreHorizontal, Pencil, Trash } from "lucide-react"
-import type { User } from "@/components/admin/data/users"
+import { MoreHorizontal, Pencil, Trash } from "lucide-react"
+import type { Admin } from "@/actions/authAdmin"
 import { DeleteConfirmationDialog } from "./delete-confirmation-dialog"
 import * as React from "react"
 
-export const columns: ColumnDef<User>[] = [
+export const columnsAdmin: ColumnDef<Admin>[] = [
+  // Kolom checkbox
   {
     id: "select",
     header: ({ table }) => (
@@ -36,45 +37,42 @@ export const columns: ColumnDef<User>[] = [
     enableSorting: false,
     enableHiding: false,
   },
+
+  // Kolom No
+  {
+    id: "no",
+    header: "No",
+    cell: ({ row }) => <div>{row.index + 1}</div>,
+  },
+
+  // Kolom ID
   {
     accessorKey: "id",
     header: "ID",
-    cell: ({ row }) => <div className="w-[80px]">{row.getValue("id")}</div>,
+    cell: ({ row }) => <div className="w-[80px] truncate">{row.getValue("id")}</div>,
   },
+
+  // Username
   {
-    accessorKey: "name",
-    header: ({ column }) => {
-      return (
-        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Name
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
-    cell: ({ row }) => <div>{row.getValue("name")}</div>,
+    accessorKey: "username",
+    header: "Username",
+    cell: ({ row }) => <div>{row.getValue("username")}</div>,
   },
+
+  // Email
   {
     accessorKey: "email",
-    header: ({ column }) => {
-      return (
-        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Email
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
+    header: "Email",
     cell: ({ row }) => <div>{row.getValue("email")}</div>,
   },
-  {
-    accessorKey: "role",
-    header: "Role",
-    cell: ({ row }) => <div>{row.getValue("role")}</div>,
-  },
+
+  // Kolom Actions
   {
     id: "actions",
-    cell: ({ row }) => {
-      const user = row.original
-      const [showDeleteDialog, setShowDeleteDialog] = React.useState(false)
+    header: "Actions",
+    cell: function ActionsCell({ row }) {
+      const admin = row.original;
+      const [showDeleteDialog, setShowDeleteDialog] = React.useState(false);
 
       return (
         <>
@@ -87,15 +85,15 @@ export const columns: ColumnDef<User>[] = [
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              {/* <DropdownMenuItem onClick={() => navigator.clipboard.writeText(user.id.toString())}>
-                Copy user ID
-              </DropdownMenuItem> */}
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => alert(`Edit ${admin.username}`)}>
                 <Pencil className="mr-2 h-4 w-4" />
                 Edit
               </DropdownMenuItem>
-              <DropdownMenuItem className="text-destructive" onClick={() => setShowDeleteDialog(true)}>
+              <DropdownMenuItem
+                className="text-destructive"
+                onClick={() => setShowDeleteDialog(true)}
+              >
                 <Trash className="mr-2 h-4 w-4" />
                 Delete
               </DropdownMenuItem>
@@ -106,16 +104,15 @@ export const columns: ColumnDef<User>[] = [
             isOpen={showDeleteDialog}
             onClose={() => setShowDeleteDialog(false)}
             onConfirm={() => {
-              console.log("Deleting user:", user)
+              console.log("Deleting admin:", admin)
               setShowDeleteDialog(false)
-              // Here you would call your delete API
+              // panggil API delete admin di sini
             }}
-            title="Delete User"
-            description={`Are you sure you want to delete ${user.name}? This action cannot be undone.`}
+            title="Delete Admin"
+            description={`Are you sure you want to delete ${admin.username}? This action cannot be undone.`}
           />
         </>
       )
     },
   },
 ]
-
