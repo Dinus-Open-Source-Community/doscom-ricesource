@@ -12,9 +12,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { MoreHorizontal, Pencil, Trash } from "lucide-react"
-import type { Admin } from "@/actions/authAdmin"
+import { deleteAdmin, updateAdmin, type Admin } from "@/actions/authAdmin"
 import { DeleteConfirmationDialog } from "./delete-confirmation-dialog"
 import * as React from "react"
+import { EditAdminDialog } from "./edit-user-dialog"
+
+
+// type ExtraProps = {
+//   refetchData: () => Promise<void>;
+// };
 
 export const columnsAdmin: ColumnDef<Admin>[] = [
   // Kolom checkbox
@@ -73,6 +79,63 @@ export const columnsAdmin: ColumnDef<Admin>[] = [
     cell: function ActionsCell({ row }) {
       const admin = row.original;
       const [showDeleteDialog, setShowDeleteDialog] = React.useState(false);
+      const [isEditDialogOpen, setIsEditDialogOpen] = React.useState(false)
+      const [selectedUser, setSelectedUser] = React.useState<Admin | null>(null)
+      const [admins, setAdmins] = React.useState<Admin[]>([]);
+
+      // const handleEditUser = (updatedAdmin: Admin) => {
+      //   setSelectedUser((prevSelected) =>
+      //     prevSelected && prevSelected.id === updatedAdmin.id ? updatedAdmin : prevSelected
+      //   )
+      //   setIsEditDialogOpen(false)
+      //   // Trigger a data refetch or update the parent state here
+      //   if (typeof window !== "undefined") {
+      //     window.location.reload(); // Example: Reload the page to reflect changes
+      //   }
+      // }
+      const handleEditAdmin = async (updatedAdmin: Admin) => {
+          try {
+              const updatedData = await updateAdmin(updatedAdmin.id, {
+                  username: updatedAdmin.username,
+                  email: updatedAdmin.email,
+                  password: updatedAdmin.password,
+              });
+
+              setAdmins((prevAdmins) =>
+                  prevAdmins.length > 0
+                      ? prevAdmins.map((admin) =>
+                          admin.id === updatedAdmin.id
+                              ? { ...admin, ...updatedData }
+                              : admin
+                      )
+                      : [updatedData] // Ensure admins state is updated even if initially empty
+              );
+          } catch (error) {
+              console.error("Failed to update admin:", error);
+          }
+          if (typeof window !== "undefined") {
+              window.location.reload(); // Reload the page to reflect changes
+          }
+      };
+
+      const resetState = () => {
+        setIsEditDialogOpen(false)
+        setShowDeleteDialog(false)
+        setSelectedUser(null)
+      }   
+      
+      const handleDeleteUser = async () => {
+        try {
+          if (admin.id) {
+        await deleteAdmin(admin.id); // Call the deleteAdmin function
+        console.log(`Admin with ID ${admin.id} deleted successfully.`);
+          }
+        } catch (error) {
+          console.error("Failed to delete admin:", error);
+        } finally {
+          setShowDeleteDialog(false); // Close the delete confirmation dialog
+        }
+      };
 
       return (
         <>
@@ -86,31 +149,48 @@ export const columnsAdmin: ColumnDef<Admin>[] = [
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => alert(`Edit ${admin.username}`)}>
+              <DropdownMenuItem onClick={() => {
+                setSelectedUser(admin) // <-- ini wajib!
+                setIsEditDialogOpen(true)
+              }}>
                 <Pencil className="mr-2 h-4 w-4" />
                 Edit
               </DropdownMenuItem>
+
               <DropdownMenuItem
                 className="text-destructive"
-                onClick={() => setShowDeleteDialog(true)}
+                onClick={() => {
+                  setSelectedUser(admin) // <-- ini juga wajib!
+                  setShowDeleteDialog(true)
+                }}
               >
                 <Trash className="mr-2 h-4 w-4" />
                 Delete
               </DropdownMenuItem>
+
             </DropdownMenuContent>
           </DropdownMenu>
+          {selectedUser && (
+            <>
+              <EditAdminDialog
+              isOpen={isEditDialogOpen}
+              onClose={resetState}
+              onEdit={handleEditAdmin}
+              admin={selectedUser}
+              />
 
-          <DeleteConfirmationDialog
-            isOpen={showDeleteDialog}
-            onClose={() => setShowDeleteDialog(false)}
-            onConfirm={() => {
-              console.log("Deleting admin:", admin)
-              setShowDeleteDialog(false)
-              // panggil API delete admin di sini
-            }}
-            title="Delete Admin"
-            description={`Are you sure you want to delete ${admin.username}? This action cannot be undone.`}
-          />
+              <DeleteConfirmationDialog
+              isOpen={showDeleteDialog}
+              onClose={resetState}
+              onConfirm={async () => {
+                console.log("Deleting admin:", admin)
+                await handleDeleteUser(); // Call the handleDeleteUser function
+              }}
+              title="Delete Admin"
+              description={`Are you sure you want to delete ${admin.username}? This action cannot be undone.`}
+              />
+            </>
+          )}
         </>
       )
     },
