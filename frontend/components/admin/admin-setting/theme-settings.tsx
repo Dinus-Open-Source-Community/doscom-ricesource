@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Sun, Moon } from "lucide-react"
+import { useEffect, useState } from "react"
 
 interface ThemeSettingsProps {
   theme: "light" | "dark"
@@ -10,6 +11,20 @@ interface ThemeSettingsProps {
 }
 
 export default function ThemeSettings({ theme, toggleTheme }: ThemeSettingsProps) {
+  const [currentTheme, setCurrentTheme] = useState<"light" | "dark">(theme)
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme") as "light" | "dark" | null
+    if (savedTheme) {
+      setCurrentTheme(savedTheme)
+    }
+  }, [])
+
+  const handleSavePreferences = () => {
+    localStorage.setItem("theme", currentTheme)
+    alert("Theme preference saved!")
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -46,7 +61,9 @@ export default function ThemeSettings({ theme, toggleTheme }: ThemeSettingsProps
         </div>
       </CardContent>
       <CardFooter className="flex justify-end">
-        <Button>Save Preferences</Button>
+      <CardFooter className="flex justify-end">
+        <Button onClick={handleSavePreferences}>Save Preferences</Button>
+      </CardFooter>
       </CardFooter>
     </Card>
   )
