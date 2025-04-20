@@ -6,16 +6,6 @@ import ProfileSettings from "@/components/admin/admin-setting/profile-settings"
 import PasswordSettings from "@/components/admin/admin-setting/password-settings"
 import ThemeSettings from "@/components/admin/admin-setting/theme-settings"
 
-
-interface UserProfile {
-    name: string
-    email: string
-    bio: string
-    avatar: string
-    password: string
-    newPassword: string
-}
-
 export default function AdminSettings() {
     const [theme, setTheme] = useState<"light" | "dark">("light")
 
