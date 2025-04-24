@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"; // Fallback for development
+const URL = process.env.NEXT_PUBLIC_API_URL; 
 
 export interface ConfigForAdmin {
     id: number;
