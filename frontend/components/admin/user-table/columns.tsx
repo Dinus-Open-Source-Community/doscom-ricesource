@@ -12,11 +12,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { ArrowUpDown, MoreHorizontal, Pencil, Trash } from "lucide-react"
-import type { User } from "@/components/admin/data/users"
 import { DeleteConfirmationDialog } from "./delete-confirmation-dialog"
 import * as React from "react"
+import { UserbyAdmin } from "@/actions/userByAdmin"
 
-export const columns: ColumnDef<User>[] = [
+export const columns: ColumnDef<UserbyAdmin>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -37,38 +37,33 @@ export const columns: ColumnDef<User>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "id",
-    header: "ID",
-    cell: ({ row }) => <div className="w-[80px]">{row.getValue("id")}</div>,
+    accessorKey: "avatar",
+    header: "Avatar",
+    cell: ({ row }) => (
+      <div className="flex items-center">
+        <img src={row.getValue("avatar")} alt="Avatar" className="h-8 w-8 rounded-full mr-4" />
+      </div>
+    ),
   },
   {
-    accessorKey: "name",
-    header: ({ column }) => {
-      return (
-        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Name
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
-    cell: ({ row }) => <div>{row.getValue("name")}</div>,
+    accessorKey: "username",
+    header: ({ column }) => (
+      <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        Username
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+    cell: ({ row }) => <div>{row.getValue("username")}</div>,
   },
   {
     accessorKey: "email",
-    header: ({ column }) => {
-      return (
-        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Email
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
+    header: ({ column }) => (
+      <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        Email
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
     cell: ({ row }) => <div>{row.getValue("email")}</div>,
-  },
-  {
-    accessorKey: "role",
-    header: "Role",
-    cell: ({ row }) => <div>{row.getValue("role")}</div>,
   },
   {
     id: "actions",
@@ -87,9 +82,6 @@ export const columns: ColumnDef<User>[] = [
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              {/* <DropdownMenuItem onClick={() => navigator.clipboard.writeText(user.id.toString())}>
-                Copy user ID
-              </DropdownMenuItem> */}
               <DropdownMenuSeparator />
               <DropdownMenuItem>
                 <Pencil className="mr-2 h-4 w-4" />
@@ -108,14 +100,12 @@ export const columns: ColumnDef<User>[] = [
             onConfirm={() => {
               console.log("Deleting user:", user)
               setShowDeleteDialog(false)
-              // Here you would call your delete API
             }}
             title="Delete User"
-            description={`Are you sure you want to delete ${user.name}? This action cannot be undone.`}
+            description={`Are you sure you want to delete ${user.username}? This action cannot be undone.`}
           />
         </>
       )
     },
   },
 ]
-
