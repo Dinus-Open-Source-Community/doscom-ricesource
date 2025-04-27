@@ -14,7 +14,7 @@ import {
 import { ArrowUpDown, MoreHorizontal, Pencil, Trash } from "lucide-react"
 import { DeleteConfirmationDialog } from "./delete-confirmation-dialog"
 import * as React from "react"
-import { UserbyAdmin } from "@/actions/userByAdmin"
+import { deleteUserByAdmin, UserbyAdmin } from "@/actions/userByAdmin"
 
 export const columnsUsers: ColumnDef<UserbyAdmin>[] = [
   {
@@ -65,6 +65,20 @@ export const columnsUsers: ColumnDef<UserbyAdmin>[] = [
     cell: ({ row }) => {
       const user = row.original
       const [showDeleteDialog, setShowDeleteDialog] = React.useState(false)
+      const [selectedUser, setSelectedUser] = React.useState<UserbyAdmin | null>(null)
+
+      const handleDeleteUSer = async (user: UserbyAdmin) => {
+        try {
+          if (user.id) {
+            await deleteUserByAdmin(user.id)
+            console.log("User deleted successfully")
+          }
+        } catch (error) {
+          console.error("Error deleting user:", error)
+        } finally {
+          setShowDeleteDialog(false)
+        }
+      };
 
       return (
         <>
@@ -78,10 +92,6 @@ export const columnsUsers: ColumnDef<UserbyAdmin>[] = [
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              {/* <DropdownMenuItem>
-                <Pencil className="mr-2 h-4 w-4" />
-                Edit
-              </DropdownMenuItem> */}
               <DropdownMenuItem className="text-destructive" onClick={() => setShowDeleteDialog(true)}>
                 <Trash className="mr-2 h-4 w-4" />
                 Delete
@@ -94,7 +104,8 @@ export const columnsUsers: ColumnDef<UserbyAdmin>[] = [
             onClose={() => setShowDeleteDialog(false)}
             onConfirm={() => {
               console.log("Deleting user:", user)
-              setShowDeleteDialog(false)
+              setShowDeleteDialog(true)
+                handleDeleteUSer(user)
             }}
             title="Delete User"
             description={`Are you sure you want to delete ${user.username}? This action cannot be undone.`}
