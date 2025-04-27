@@ -17,13 +17,7 @@ import { DeleteConfirmationDialog } from "./delete-confirmation-dialog"
 import * as React from "react"
 import { EditAdminDialog } from "./edit-user-dialog"
 
-
-// type ExtraProps = {
-//   refetchData: () => Promise<void>;
-// };
-
 export const columnsAdmin: ColumnDef<Admin>[] = [
-  // Kolom checkbox
   {
     id: "select",
     header: ({ table }) => (
@@ -43,36 +37,26 @@ export const columnsAdmin: ColumnDef<Admin>[] = [
     enableSorting: false,
     enableHiding: false,
   },
-
-  // Kolom No
   {
     id: "no",
     header: "No",
     cell: ({ row }) => <div>{row.index + 1}</div>,
   },
-
-  // Kolom ID
   {
     accessorKey: "id",
     header: "ID",
     cell: ({ row }) => <div className="w-[80px] truncate">{row.getValue("id")}</div>,
   },
-
-  // Username
   {
     accessorKey: "username",
     header: "Username",
     cell: ({ row }) => <div>{row.getValue("username")}</div>,
   },
-
-  // Email
   {
     accessorKey: "email",
     header: "Email",
     cell: ({ row }) => <div>{row.getValue("email")}</div>,
   },
-
-  // Kolom Actions
   {
     id: "actions",
     header: "Actions",
@@ -83,16 +67,6 @@ export const columnsAdmin: ColumnDef<Admin>[] = [
       const [selectedUser, setSelectedUser] = React.useState<Admin | null>(null)
       const [admins, setAdmins] = React.useState<Admin[]>([]);
 
-      // const handleEditUser = (updatedAdmin: Admin) => {
-      //   setSelectedUser((prevSelected) =>
-      //     prevSelected && prevSelected.id === updatedAdmin.id ? updatedAdmin : prevSelected
-      //   )
-      //   setIsEditDialogOpen(false)
-      //   // Trigger a data refetch or update the parent state here
-      //   if (typeof window !== "undefined") {
-      //     window.location.reload(); // Example: Reload the page to reflect changes
-      //   }
-      // }
       const handleEditAdmin = async (updatedAdmin: Admin) => {
           try {
               const updatedData = await updateAdmin(updatedAdmin.id, {
@@ -108,13 +82,13 @@ export const columnsAdmin: ColumnDef<Admin>[] = [
                               ? { ...admin, ...updatedData }
                               : admin
                       )
-                      : [updatedData] // Ensure admins state is updated even if initially empty
+                      : [updatedData] 
               );
           } catch (error) {
               console.error("Failed to update admin:", error);
           }
           if (typeof window !== "undefined") {
-              window.location.reload(); // Reload the page to reflect changes
+              window.location.reload();
           }
       };
 
@@ -127,13 +101,13 @@ export const columnsAdmin: ColumnDef<Admin>[] = [
       const handleDeleteUser = async () => {
         try {
           if (admin.id) {
-        await deleteAdmin(admin.id); // Call the deleteAdmin function
+        await deleteAdmin(admin.id);
         console.log(`Admin with ID ${admin.id} deleted successfully.`);
           }
         } catch (error) {
           console.error("Failed to delete admin:", error);
         } finally {
-          setShowDeleteDialog(false); // Close the delete confirmation dialog
+          setShowDeleteDialog(false);
         }
       };
 
@@ -150,7 +124,7 @@ export const columnsAdmin: ColumnDef<Admin>[] = [
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => {
-                setSelectedUser(admin) // <-- ini wajib!
+                setSelectedUser(admin)
                 setIsEditDialogOpen(true)
               }}>
                 <Pencil className="mr-2 h-4 w-4" />
@@ -160,7 +134,7 @@ export const columnsAdmin: ColumnDef<Admin>[] = [
               <DropdownMenuItem
                 className="text-destructive"
                 onClick={() => {
-                  setSelectedUser(admin) // <-- ini juga wajib!
+                  setSelectedUser(admin)
                   setShowDeleteDialog(true)
                 }}
               >
@@ -184,7 +158,7 @@ export const columnsAdmin: ColumnDef<Admin>[] = [
               onClose={resetState}
               onConfirm={async () => {
                 console.log("Deleting admin:", admin)
-                await handleDeleteUser(); // Call the handleDeleteUser function
+                await handleDeleteUser();
               }}
               title="Delete Admin"
               description={`Are you sure you want to delete ${admin.username}? This action cannot be undone.`}
