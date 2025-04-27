@@ -66,17 +66,6 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
               <Trash className="mr-2 h-4 w-4" />
               Delete ({selectedRows.length})
             </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-9"
-              onClick={() => {
-                console.log("Export selected rows", selectedRows)
-              }}
-            >
-              <Download className="mr-2 h-4 w-4" />
-              Export
-            </Button>
           </>
         )}
       </div>
