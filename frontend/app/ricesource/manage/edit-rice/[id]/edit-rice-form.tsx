@@ -28,6 +28,8 @@ export function EditRiceForm({ token, initialData, riceId }: EditRiceFormProps) 
     const [rice, setRice] = useState<Partial<Rice>>(initialData)
     const [files, setFiles] = useState<(File | string)[]>([])
     const [isLoading, setIsLoading] = useState(false)
+    const user = localStorage.getItem("user")
+    const userId = user ? JSON.parse(user).id : null
     const { toast } = useToast()
     const router = useRouter()
 
@@ -82,7 +84,7 @@ export function EditRiceForm({ token, initialData, riceId }: EditRiceFormProps) 
                 title: "Success",
                 description: "Rice configuration updated successfully!",
             })
-            router.push("/ricesource/manage")
+            router.push("/ricesource/manage/" + userId)
         } catch (error: any) {
             console.error("Update error:", error)
             toast({

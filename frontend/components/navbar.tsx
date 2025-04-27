@@ -112,8 +112,8 @@ export default function Navbar() {
                   Bookmark
                 </Link>
                 <Link
-                  href="/ricesource/manage"
-                  className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${pathname === "/ricesource/manage"
+                  href={`/ricesource/manage/${user.id}`}
+                  className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${pathname === "/ricesource/manage/" + user.id
                     ? "border-primary text-primary"
                     : "border-transparent text-muted-foreground hover:border-muted-foreground hover:text-foreground"
                     }`}

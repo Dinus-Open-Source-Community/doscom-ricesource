@@ -37,6 +37,8 @@ export function CreateRiceForm({ token }: CreateRiceFormProps) {
     const [isLoading, setIsLoading] = useState(false)
     const { toast } = useToast()
     const router = useRouter()
+    const user = localStorage.getItem("user")
+    const userId = user ? JSON.parse(user).id : null
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target
@@ -74,7 +76,7 @@ export function CreateRiceForm({ token }: CreateRiceFormProps) {
                     title: "Success",
                     description: "Rice configuration created successfully!",
                 })
-                router.push("/ricesource/manage-rice")
+                router.push("/ricesource/manage/" + userId)
             } else {
                 throw new Error(response.message || "Failed to create rice")
             }

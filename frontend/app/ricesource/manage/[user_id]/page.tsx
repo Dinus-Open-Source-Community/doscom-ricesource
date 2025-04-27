@@ -5,14 +5,14 @@ import { Plus } from "lucide-react"
 import Link from "next/link"
 import { Tabs, TabsContent } from "@/components/ui/tabs"
 import { Skeleton } from "@/components/ui/skeleton"
-import { getAllRices } from "@/actions/rice"
+import { getRiceByUserId } from "@/actions/rice"
 import ManageRiceList from "@/components/manage-rice-list"
 import { cookies } from "next/headers";
 
-export default async function ManagePage() {
-
+export default async function ManagePage({ params }: { params: { user_id: string } }) {
+    const { user_id } = await params; // Replace with actual user ID
     const cookieStore = await cookies(); // Correctly get cookies
-    const userRices = await getAllRices()
+    const userRices = await getRiceByUserId(user_id)
     const token = cookieStore.get("token")?.value || null; // Correctly get token from cookies
 
 
@@ -24,7 +24,7 @@ export default async function ManagePage() {
                         <h1 className="text-3xl font-bold">Manage Your Rices</h1>
                         <p className="text-muted-foreground mt-1">View, edit, and manage your rice configurations</p>
                     </div>
-                    <Link href="/ricesource/manage/add-rice">
+                    <Link href={`/ricesource/manage/${user_id}/add-rice`}>
                         <Button className="gap-2">
                             <Plus className="h-4 w-4" />
                             Add New Rice

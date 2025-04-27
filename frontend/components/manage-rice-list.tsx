@@ -48,6 +48,8 @@ export default function ManageRiceList({ rices, token }: ManageRiceListProps) {
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
     const [riceToDelete, setRiceToDelete] = useState<number | null>(null)
     const [page, setPage] = useState(1)
+    const user = localStorage.getItem("user")
+    const userId = user ? JSON.parse(user).id : null
     const [isDeleting, setIsDeleting] = useState(false)
     const { toast } = useToast()
 
@@ -154,7 +156,7 @@ export default function ManageRiceList({ rices, token }: ManageRiceListProps) {
                                                 View
                                             </Button>
                                         </Link>
-                                        <Link href={`/ricesource/manage/edit-rice/${rice.id}`}>
+                                        <Link href={`/ricesource/manage/${userId}/edit-rice/${rice.id}`}>
                                             <Button variant="outline" size="sm" className="gap-1">
                                                 <Edit className="h-4 w-4" />
                                                 Edit

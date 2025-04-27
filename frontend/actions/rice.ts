@@ -34,6 +34,16 @@ export async function getRiceById(id: string): Promise<Rice> {
     }
 }
 
+export async function getRiceByUserId(userId: string): Promise<Rice[]> {
+    try {
+        const response = await fetch(`${URL}/user/${userId}`);
+        return await handleResponse(response);
+    } catch (error) {
+        console.error(`Error fetching rice configs for user ID ${userId}:`, error);
+        throw error;
+    }
+}
+
 export async function createRice(formData: FormData, token: string): Promise<ApiResponse<Rice>> {
     try {
         const response = await axios.post<ApiResponse<Rice>>(
