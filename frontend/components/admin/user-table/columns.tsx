@@ -16,7 +16,7 @@ import { DeleteConfirmationDialog } from "./delete-confirmation-dialog"
 import * as React from "react"
 import { UserbyAdmin } from "@/actions/userByAdmin"
 
-export const columns: ColumnDef<UserbyAdmin>[] = [
+export const columnsUsers: ColumnDef<UserbyAdmin>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -37,6 +37,11 @@ export const columns: ColumnDef<UserbyAdmin>[] = [
     enableHiding: false,
   },
   {
+    id: "no",
+    header: "No",
+    cell: ({ row }) => <div>{row.index + 1}</div>,
+  },
+  {
     accessorKey: "avatar",
     header: "Avatar",
     cell: ({ row }) => (
@@ -47,22 +52,12 @@ export const columns: ColumnDef<UserbyAdmin>[] = [
   },
   {
     accessorKey: "username",
-    header: ({ column }) => (
-      <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-        Username
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
+    header: "Username",
     cell: ({ row }) => <div>{row.getValue("username")}</div>,
   },
   {
     accessorKey: "email",
-    header: ({ column }) => (
-      <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-        Email
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
+    header: "Email",
     cell: ({ row }) => <div>{row.getValue("email")}</div>,
   },
   {
@@ -83,10 +78,10 @@ export const columns: ColumnDef<UserbyAdmin>[] = [
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
+              {/* <DropdownMenuItem>
                 <Pencil className="mr-2 h-4 w-4" />
                 Edit
-              </DropdownMenuItem>
+              </DropdownMenuItem> */}
               <DropdownMenuItem className="text-destructive" onClick={() => setShowDeleteDialog(true)}>
                 <Trash className="mr-2 h-4 w-4" />
                 Delete
