@@ -20,7 +20,7 @@ import { CommandSnippet } from "@/components/command-snippet";
 export default async function RiceDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
   const rice = await getRiceById(id);

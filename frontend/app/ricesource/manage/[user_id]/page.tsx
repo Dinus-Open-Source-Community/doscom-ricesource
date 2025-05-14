@@ -9,7 +9,7 @@ import { getRiceByUserId } from "@/actions/rice"
 import ManageRiceList from "@/components/manage-rice-list"
 import { cookies } from "next/headers";
 
-export default async function ManagePage({ params }: { params: { user_id: string } }) {
+export default async function ManagePage({ params }: { params: Promise<{ user_id: string }> }) {
     const { user_id } = await params; // Replace with actual user ID
     const cookieStore = await cookies(); // Correctly get cookies
     const userRices = await getRiceByUserId(user_id)

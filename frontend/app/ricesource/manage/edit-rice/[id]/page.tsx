@@ -7,8 +7,9 @@ import { EditRiceForm } from './edit-rice-form'
 export default async function EditRicePage({
     params
 }: {
-    params: { id: string }
+    params: Promise<{ id: string }>
 }) {
+    const { id } = await params;
     const cookieStore = await cookies()
     const token = cookieStore.get('token')?.value || null
 
@@ -18,7 +19,7 @@ export default async function EditRicePage({
     }
 
     try {
-        const riceData = await getRiceById(params.id)
+        const riceData = await getRiceById(id)
 
         return (
             <div className="container mx-auto py-8">
@@ -29,7 +30,7 @@ export default async function EditRicePage({
                     <EditRiceForm
                         token={token}
                         initialData={riceData}
-                        riceId={params.id}
+                        riceId={id}
                     />
                 </Card>
             </div>
