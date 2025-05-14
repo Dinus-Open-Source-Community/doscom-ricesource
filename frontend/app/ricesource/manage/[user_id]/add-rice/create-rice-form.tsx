@@ -6,6 +6,8 @@ import { useToast } from "@/hooks/use-toast"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import MDEditor from '@uiw/react-md-editor';
+import rehypeSanitize from "rehype-sanitize";
 import { Label } from "@/components/ui/label"
 import {
     Select,
@@ -35,6 +37,7 @@ export function CreateRiceForm({ token }: CreateRiceFormProps) {
     })
     const [files, setFiles] = useState<(File | string)[]>([])
     const [isLoading, setIsLoading] = useState(false)
+    const [snippet, setSnippet] = useState<string>("")
     const { toast } = useToast()
     const router = useRouter()
     const user = localStorage.getItem("user")
@@ -63,6 +66,8 @@ export function CreateRiceForm({ token }: CreateRiceFormProps) {
                     formData.append(key, String(value))
                 }
             })
+
+            formData.append("snippets", snippet)
 
             // Append each file
             files.forEach((file) => {
@@ -226,6 +231,23 @@ export function CreateRiceForm({ token }: CreateRiceFormProps) {
                         placeholder="Describe your rice configuration..."
                         rows={5}
                         required
+                    />
+                </div>
+
+                {/* snippet*/}
+                <div className="space-y-2 " data-color-mode="light">
+                    <Label htmlFor="snippets">Snippet</Label>
+                    <MDEditor
+                        className="prose lg:prose-xl"
+                        value={snippet}
+                        onChange={(value) => setSnippet(value || "")}
+                        previewOptions={{
+                            rehypePlugins: [[rehypeSanitize]],
+                            components: {
+                                ul: ({ children }) => <ul style={{ listStyleType: 'disc', marginLeft: '20px' }}>{children}</ul>,
+                                ol: ({ children }) => <ol style={{ listStyleType: 'decimal', marginLeft: '20px' }}>{children}</ol>,
+                            }
+                        }}
                     />
                 </div>
 
