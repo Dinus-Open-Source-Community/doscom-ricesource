@@ -47,6 +47,23 @@ class ConfigController {
     }
   }
 
+  // Mendapatkan config dengan like terbanyak
+  async getTopConfigs(req, res) {
+    try {
+      const { data, error } = await supabase
+        .from("config")
+        .select("*, users(username)")
+        .order("like", { ascending: false })
+        .limit(4);
+
+      if (error) throw error;
+
+      res.status(200).json({ success: true, data });
+    } catch (error) {
+      res.status(500).json({ success: false, message: error.message });
+    }
+  }
+
   // Mendapatkan config berdasarkan ID
   async getConfigById(req, res) {
     const { id } = req.params;

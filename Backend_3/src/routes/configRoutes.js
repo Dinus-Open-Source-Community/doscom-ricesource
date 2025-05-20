@@ -7,6 +7,9 @@ const router = express.Router();
 // Endpoint untuk mengambil semua config (publik)
 router.get("/configs", ConfigController.getAllConfigs);
 
+// Endpoint untuk mengambil config dengan like terbanyak (publik)
+router.get("/configs/top", ConfigController.getTopConfigs);
+
 // Endpoint untuk mengambil config berdasarkan ID (publik)
 router.get("/configs/:id", ConfigController.getConfigById);
 
