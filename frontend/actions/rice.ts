@@ -24,6 +24,16 @@ export async function getAllRices(): Promise<Rice[]> {
     }
 }
 
+export async function getTopRices(): Promise<Rice[]> {
+    try {
+        const response = await fetch(`${URL}/top`);
+        return await handleResponse(response);
+    } catch (error) {
+        console.error("Error fetching top rice configs:", error);
+        throw error;
+    }
+}
+
 export async function getRiceById(id: string): Promise<Rice> {
     try {
         const response = await fetch(`${URL}/${id}`);

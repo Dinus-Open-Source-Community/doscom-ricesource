@@ -141,10 +141,7 @@ export default async function RiceDetailPage({
         <CommandSnippet
           title="Update and Clean System"
           description="Commands to update and clean your system."
-          command={`# Update all packages
-sudo pacman -Syu
-# Remove unused packages
-sudo pacman -Rns $(pacman -Qdtq)`}
+          command={rice.snippets ? rice.snippets : "nothing"}
         />
       </div>
 

@@ -8,6 +8,7 @@ export interface Rice {
   desktop_environment: string | null;
   windows_manager: string | null;
   distro: string | null;
+  snippets: string | null;
   terminal: string | null;
   shell: string | null;
   author: string | null;

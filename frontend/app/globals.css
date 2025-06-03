@@ -92,3 +92,16 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* Misalnya di file global.css atau styles.css */
+.mde-reset ul {
+  list-style-type: disc !important;
+  list-style-position: inside !important;
+  margin-left: 1rem !important;
+}
+
+.mde-reset ol {
+  list-style-type: decimal !important;
+  list-style-position: inside !important;
+  margin-left: 1rem !important;
+}

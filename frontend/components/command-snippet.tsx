@@ -10,6 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import MDEditor from "@uiw/react-md-editor";
 
 interface CommandSnippetProps {
   title: string;
@@ -41,11 +42,9 @@ export function CommandSnippet({
         <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="bg-muted p-4 rounded-md font-mono text-sm relative">
+        <div className="bg-muted rounded-md font-mono text-sm relative" data-color-mode="light">
           {/* Gunakan <pre> dan <code> untuk menampilkan teks multi-line */}
-          <pre className="whitespace-pre-wrap break-words">
-            <code>{command}</code>
-          </pre>
+          <MDEditor.Markdown source={command} className="mde-reset" style={{ padding: "20px", backgroundColor: "whitesmoke" }} />
           <Button
             variant="ghost"
             size="icon"
