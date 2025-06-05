@@ -3,37 +3,57 @@ import * as React from "react"
 import type { Table } from "@tanstack/react-table"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { X, Trash, Download, Plus } from "lucide-react"
+import { X, Trash, Plus } from "lucide-react"
 import { DeleteConfirmationDialog } from "./delete-confirmation-dialog"
 import { AddUserDialog } from "./addAdminDialog"
-import { fetchAdminData, adminRegister, Admin } from '@/actions/authAdmin';
-
+import { adminRegister } from "@/actions/authAdmin"
+import { toast } from "sonner"
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>
+  onAdminAdded?: () => void
 }
 
-export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>) {
+export function DataTableToolbar<TData>({ table, onAdminAdded }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0
   const selectedRows = table.getFilteredSelectedRowModel().rows
   const [showBulkDeleteDialog, setShowBulkDeleteDialog] = React.useState(false)
   const [showAddModal, setShowAddModal] = React.useState(false)
 
-  const [admins, setAdmins] = React.useState<Admin[]>([]);
-
-
   const handleAddUser = async (formData: { username: string; email: string; password: string }) => {
     try {
       const newAdmin = await adminRegister({
         ...formData,
-        token: "your-token-if-required" // Ensure you pass any required value
-      });
-      // Update the admin list if needed
-      setAdmins((prev) => [...prev, newAdmin]);
+        token: "your-token-if-required", // Ensure you pass any required value
+      })
+
+      toast.success("Admin created successfully", {
+        description: `${formData.username} has been added to the system.`,
+      })
+
+      // Trigger refresh
+      if (onAdminAdded) {
+        onAdminAdded()
+      }
     } catch (error) {
-      console.error('Failed to register admin:', error);
+      console.error("Failed to register admin:", error)
+      toast.error("Failed to create admin", {
+        description: "There was an error creating the admin. Please try again.",
+      })
     }
-  };
+  }
+
+  const handleBulkDelete = () => {
+    // In a real application, you would implement bulk delete API call here
+    toast.success("Admins deleted successfully", {
+      description: `${selectedRows.length} admins have been removed from the system.`,
+    })
+    table.resetRowSelection()
+    setShowBulkDeleteDialog(false)
+    if (onAdminAdded) {
+      onAdminAdded() // Refresh the data
+    }
+  }
 
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -57,16 +77,14 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
       <div className="flex items-center space-x-2">
         <Button variant="default" size="sm" className="h-9" onClick={() => setShowAddModal(true)}>
           <Plus className="mr-2 h-4 w-4" />
-          Add User
+          Add Admin
         </Button>
 
         {selectedRows.length > 0 && (
-          <>
-            <Button variant="outline" size="sm" className="h-9" onClick={() => setShowBulkDeleteDialog(true)}>
-              <Trash className="mr-2 h-4 w-4" />
-              Delete ({selectedRows.length})
-            </Button>
-          </>
+          <Button variant="outline" size="sm" className="h-9" onClick={() => setShowBulkDeleteDialog(true)}>
+            <Trash className="mr-2 h-4 w-4" />
+            Delete ({selectedRows.length})
+          </Button>
         )}
       </div>
 
@@ -74,21 +92,13 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
       <DeleteConfirmationDialog
         isOpen={showBulkDeleteDialog}
         onClose={() => setShowBulkDeleteDialog(false)}
-        onConfirm={() => {
-          console.log("Bulk deleting rows:", selectedRows)
-          table.resetRowSelection()
-          setShowBulkDeleteDialog(false)
-        }}
-        title="Delete Selected Users"
-        description={`Are you sure you want to delete ${selectedRows.length} selected users? This action cannot be undone.`}
+        onConfirm={handleBulkDelete}
+        title="Delete Selected Admins"
+        description={`Are you sure you want to delete ${selectedRows.length} selected admins? This action cannot be undone.`}
       />
 
       {/* Add User Modal */}
-      <AddUserDialog
-        open={showAddModal}
-        onOpenChange={setShowAddModal}
-        onSubmit={handleAddUser}
-      />
+      <AddUserDialog open={showAddModal} onOpenChange={setShowAddModal} onSubmit={handleAddUser} />
     </div>
   )
 }

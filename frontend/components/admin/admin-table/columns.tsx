@@ -11,13 +11,19 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { MoreHorizontal, Pencil, Trash } from "lucide-react"
+import { ArrowUpDown, MoreHorizontal, Pencil, Trash } from "lucide-react"
 import { deleteAdmin, updateAdmin, type Admin } from "@/actions/authAdmin"
 import { DeleteConfirmationDialog } from "./delete-confirmation-dialog"
-import * as React from "react"
 import { EditAdminDialog } from "./edit-user-dialog"
+import * as React from "react"
+import { toast } from "sonner"
 
-export const columnsAdmin: ColumnDef<Admin>[] = [
+interface ColumnsProps {
+  onAdminDeleted?: () => void
+  onAdminEdited?: () => void
+}
+
+export const createColumnsAdmin = (onAdminDeleted?: () => void, onAdminEdited?: () => void): ColumnDef<Admin>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -44,72 +50,114 @@ export const columnsAdmin: ColumnDef<Admin>[] = [
   },
   {
     accessorKey: "id",
-    header: "ID",
-    cell: ({ row }) => <div className="w-[80px] truncate">{row.getValue("id")}</div>,
+    header: ({ column }) => {
+      return (
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          ID
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
+    cell: ({ row }) => <div className="w-[80px] truncate font-mono">{row.getValue("id")}</div>,
   },
   {
     accessorKey: "username",
-    header: "Username",
+    header: ({ column }) => {
+      return (
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Username
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
     cell: ({ row }) => <div>{row.getValue("username")}</div>,
   },
   {
     accessorKey: "email",
-    header: "Email",
+    header: ({ column }) => {
+      return (
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Email
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
     cell: ({ row }) => <div>{row.getValue("email")}</div>,
   },
   {
     id: "actions",
     header: "Actions",
     cell: function ActionsCell({ row }) {
-      const admin = row.original;
-      const [showDeleteDialog, setShowDeleteDialog] = React.useState(false);
+      const admin = row.original
+      const [showDeleteDialog, setShowDeleteDialog] = React.useState(false)
       const [isEditDialogOpen, setIsEditDialogOpen] = React.useState(false)
       const [selectedUser, setSelectedUser] = React.useState<Admin | null>(null)
-      const [admins, setAdmins] = React.useState<Admin[]>([]);
+      const [isDeleting, setIsDeleting] = React.useState(false)
+      const [isEditing, setIsEditing] = React.useState(false)
 
       const handleEditAdmin = async (updatedAdmin: Admin) => {
-          try {
-              const updatedData = await updateAdmin(updatedAdmin.id, {
-                  username: updatedAdmin.username,
-                  email: updatedAdmin.email,
-                  password: updatedAdmin.password,
-              });
+        if (isEditing) return
 
-              setAdmins((prevAdmins) =>
-                  prevAdmins.length > 0
-                      ? prevAdmins.map((admin) =>
-                          admin.id === updatedAdmin.id
-                              ? { ...admin, ...updatedData }
-                              : admin
-                      )
-                      : [updatedData] 
-              );
-          } catch (error) {
-              console.error("Failed to update admin:", error);
+        setIsEditing(true)
+        try {
+          const updatedData = await updateAdmin(updatedAdmin.id, {
+            username: updatedAdmin.username,
+            email: updatedAdmin.email,
+            password: updatedAdmin.password,
+          })
+
+          toast.success("Admin updated successfully", {
+            description: `${updatedAdmin.username} has been updated.`,
+          })
+
+          // Trigger refresh
+          if (onAdminEdited) {
+            onAdminEdited()
           }
-          if (typeof window !== "undefined") {
-              window.location.reload();
-          }
-      };
+
+          resetState()
+        } catch (error) {
+          console.error("Failed to update admin:", error)
+          toast.error("Failed to update admin", {
+            description: "There was an error updating the admin. Please try again.",
+          })
+        } finally {
+          setIsEditing(false)
+        }
+      }
 
       const resetState = () => {
         setIsEditDialogOpen(false)
         setShowDeleteDialog(false)
         setSelectedUser(null)
-      }   
-      
+      }
+
       const handleDeleteUser = async () => {
+        if (isDeleting) return
+
+        setIsDeleting(true)
         try {
           if (admin.id) {
-        await deleteAdmin(admin.id);
-        console.log(`Admin with ID ${admin.id} deleted successfully.`);
+            await deleteAdmin(admin.id)
+            toast.success("Admin deleted successfully", {
+              description: `${admin.username} has been removed from the system.`,
+            })
+
+            // Trigger refresh
+            if (onAdminDeleted) {
+              onAdminDeleted()
+            }
           }
         } catch (error) {
-          console.error("Failed to delete admin:", error);
+          console.error("Failed to delete admin:", error)
+          toast.error("Failed to delete admin", {
+            description: "There was an error deleting the admin. Please try again.",
+          })
         } finally {
-          setShowDeleteDialog(false);
+          setIsDeleting(false)
+          setShowDeleteDialog(false)
         }
-      };
+      }
 
       return (
         <>
@@ -123,12 +171,15 @@ export const columnsAdmin: ColumnDef<Admin>[] = [
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => {
-                setSelectedUser(admin)
-                setIsEditDialogOpen(true)
-              }}>
+              <DropdownMenuItem
+                onClick={() => {
+                  setSelectedUser(admin)
+                  setIsEditDialogOpen(true)
+                }}
+                disabled={isEditing}
+              >
                 <Pencil className="mr-2 h-4 w-4" />
-                Edit
+                {isEditing ? "Editing..." : "Edit"}
               </DropdownMenuItem>
 
               <DropdownMenuItem
@@ -137,31 +188,28 @@ export const columnsAdmin: ColumnDef<Admin>[] = [
                   setSelectedUser(admin)
                   setShowDeleteDialog(true)
                 }}
+                disabled={isDeleting}
               >
                 <Trash className="mr-2 h-4 w-4" />
-                Delete
+                {isDeleting ? "Deleting..." : "Delete"}
               </DropdownMenuItem>
-
             </DropdownMenuContent>
           </DropdownMenu>
           {selectedUser && (
             <>
               <EditAdminDialog
-              isOpen={isEditDialogOpen}
-              onClose={resetState}
-              onEdit={handleEditAdmin}
-              admin={selectedUser}
+                isOpen={isEditDialogOpen}
+                onClose={resetState}
+                onEdit={handleEditAdmin}
+                admin={selectedUser}
               />
 
               <DeleteConfirmationDialog
-              isOpen={showDeleteDialog}
-              onClose={resetState}
-              onConfirm={async () => {
-                console.log("Deleting admin:", admin)
-                await handleDeleteUser();
-              }}
-              title="Delete Admin"
-              description={`Are you sure you want to delete ${admin.username}? This action cannot be undone.`}
+                isOpen={showDeleteDialog}
+                onClose={resetState}
+                onConfirm={handleDeleteUser}
+                title="Delete Admin"
+                description={`Are you sure you want to delete ${admin.username}? This action cannot be undone.`}
               />
             </>
           )}
@@ -170,3 +218,6 @@ export const columnsAdmin: ColumnDef<Admin>[] = [
     },
   },
 ]
+
+// Default export for backward compatibility
+export const columnsAdmin = createColumnsAdmin()
