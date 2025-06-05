@@ -22,7 +22,7 @@ import { DataTableToolbar } from "./data-table-toolbar"
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
-  onRefresh?: () => void // Add refresh callback
+  onRefresh?: () => void 
 }
 
 export function DataTable<TData, TValue>({ columns, data, onRefresh }: DataTableProps<TData, TValue>) {

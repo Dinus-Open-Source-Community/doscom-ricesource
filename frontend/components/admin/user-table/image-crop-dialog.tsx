@@ -56,11 +56,9 @@ export function ImageCropDialog({ isOpen, onClose, image, onCropComplete }: Imag
             throw new Error("No 2d context")
         }
 
-        // Set canvas size to the cropped area size
         canvas.width = pixelCrop.width
         canvas.height = pixelCrop.height
 
-        // Draw the cropped image onto the canvas
         ctx.drawImage(
             image,
             pixelCrop.x,
@@ -73,7 +71,6 @@ export function ImageCropDialog({ isOpen, onClose, image, onCropComplete }: Imag
             pixelCrop.height,
         )
 
-        // Return the cropped image as a data URL
         return canvas.toDataURL("image/jpeg")
     }
 

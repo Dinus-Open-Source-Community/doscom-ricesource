@@ -12,7 +12,7 @@ import { useToast } from "@/hooks/use-toast"
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>
-  onUserAdded?: () => void // Add callback to refresh data
+  onUserAdded?: () => void
 }
 
 export function DataTableToolbar<TData>({ table, onUserAdded }: DataTableToolbarProps<TData>) {
