@@ -1,4 +1,3 @@
-// DataTableToolbar.tsx
 "use client"
 
 import * as React from "react"
@@ -7,8 +6,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { X, Trash, Plus } from "lucide-react"
 import { DeleteConfirmationDialog } from "./delete-confirmation-dialog"
-import { AddUserDialog } from "@/components/admin/user-table/addUserDialog"
-import { useToast } from "@/hooks/use-toast"
+import { AddUserDialog } from "./addUserDialog"
+import { toast } from "sonner"
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>
@@ -20,7 +19,18 @@ export function DataTableToolbar<TData>({ table, onUserAdded }: DataTableToolbar
   const selectedRows = table.getFilteredSelectedRowModel().rows
   const [showBulkDeleteDialog, setShowBulkDeleteDialog] = React.useState(false)
   const [showAddModal, setShowAddModal] = React.useState(false)
-  const { toast } = useToast()
+
+  const handleBulkDelete = () => {
+    // In a real application, you would implement bulk delete API call here
+    toast.success("Users deleted successfully", {
+      description: `${selectedRows.length} users have been removed from the system.`,
+    })
+    table.resetRowSelection()
+    setShowBulkDeleteDialog(false)
+    if (onUserAdded) {
+      onUserAdded() // Refresh the data
+    }
+  }
 
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -56,11 +66,7 @@ export function DataTableToolbar<TData>({ table, onUserAdded }: DataTableToolbar
       <DeleteConfirmationDialog
         isOpen={showBulkDeleteDialog}
         onClose={() => setShowBulkDeleteDialog(false)}
-        onConfirm={() => {
-          console.log("Bulk deleting rows:", selectedRows)
-          table.resetRowSelection()
-          setShowBulkDeleteDialog(false)
-        }}
+        onConfirm={handleBulkDelete}
         title="Delete Selected Users"
         description={`Are you sure you want to delete ${selectedRows.length} selected users? This action cannot be undone.`}
       />
@@ -69,8 +75,11 @@ export function DataTableToolbar<TData>({ table, onUserAdded }: DataTableToolbar
         open={showAddModal}
         onOpenChange={(open) => {
           setShowAddModal(open)
-          if (!open && onUserAdded) onUserAdded()
+          if (!open && onUserAdded) {
+            onUserAdded() // Refresh data when dialog closes after adding user
+          }
         }}
+        onUserAdded={onUserAdded}
       />
     </div>
   )

@@ -1,29 +1,26 @@
-import "../globals.css";
-import { Geist, Geist_Mono } from "next/font/google";
-import { AppSidebar } from "@/components/admin/adminSidebar/app-sidebar";
-import { Separator } from "@/components/ui/separator";
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar";
-
-import { DynamicBreadcrumb } from "@/components/admin/adminSidebar/breadcrumb"; // 👈 file client component baru
+import type React from "react"
+import "../globals.css"
+import { Geist, Geist_Mono } from "next/font/google"
+import { AppSidebar } from "@/components/admin/adminSidebar/app-sidebar"
+import { Separator } from "@/components/ui/separator"
+import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+import { SonnerProvider } from "@/components/admin/sonner-provider"
+import { DynamicBreadcrumb } from "@/components/admin/adminSidebar/breadcrumb"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
-});
+})
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
-});
+})
 
 export default function DashboardLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
   return (
     <SidebarProvider>
@@ -38,6 +35,7 @@ export default function DashboardLayout({
         </header>
         {children}
       </SidebarInset>
+      <SonnerProvider />
     </SidebarProvider>
-  );
+  )
 }

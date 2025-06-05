@@ -18,18 +18,28 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 
 import { DataTablePagination } from "./data-table-pagination"
 import { DataTableToolbar } from "./data-table-toolbar"
+import { createColumns } from "./columns"
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
+  columns?: ColumnDef<TData, TValue>[]
   data: TData[]
-  onRefresh?: () => void 
+  onRefresh?: () => void
+  onUserDeleted?: () => void
 }
 
-export function DataTable<TData, TValue>({ columns, data, onRefresh }: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({
+  columns: providedColumns,
+  data,
+  onRefresh,
+  onUserDeleted,
+}: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [sorting, setSorting] = React.useState<SortingState>([])
+
+  // Use provided columns or create new ones with callbacks
+  const columns: ColumnDef<TData, TValue>[] = providedColumns || createColumns(onUserDeleted) as ColumnDef<TData, TValue>[]
 
   const table = useReactTable({
     data,

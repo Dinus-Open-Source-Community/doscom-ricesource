@@ -1,5 +1,7 @@
 "use client"
 
+import type React from "react"
+
 import { useState, useRef } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
@@ -8,13 +10,16 @@ import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Camera } from "lucide-react"
 import { createUserByAdmin } from "@/actions/userByAdmin"
+import { toast } from "sonner"
 
 export function AddUserDialog({
   open,
   onOpenChange,
+  onUserAdded,
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
+  onUserAdded?: () => void
 }) {
   const [formData, setFormData] = useState({
     username: "",
@@ -41,6 +46,15 @@ export function AddUserDialog({
 
   const handleSave = async () => {
     if (saving) return
+
+    // Basic validation
+    if (!formData.username || !formData.email || !formData.password) {
+      toast.error("Validation Error", {
+        description: "Please fill in all required fields.",
+      })
+      return
+    }
+
     setSaving(true)
     try {
       const fd = new FormData()
@@ -50,12 +64,27 @@ export function AddUserDialog({
       if (formData.avatar) {
         fd.append("avatar", formData.avatar)
       }
+
       await createUserByAdmin(fd)
+
+      toast.success("User created successfully", {
+        description: `${formData.username} has been added to the system.`,
+      })
+
+      // Reset form
       setFormData({ username: "", email: "", password: "", avatar: null })
       setAvatarPreview(null)
       onOpenChange(false)
+
+      // Trigger refresh
+      if (onUserAdded) {
+        onUserAdded()
+      }
     } catch (error) {
-      console.error("Gagal membuat user:", error)
+      console.error("Failed to create user:", error)
+      toast.error("Failed to create user", {
+        description: "There was an error creating the user. Please try again.",
+      })
     } finally {
       setSaving(false)
     }
@@ -77,7 +106,7 @@ export function AddUserDialog({
         <div className="flex justify-center my-4">
           <div className="relative cursor-pointer" onClick={handleAvatarClick}>
             <Avatar className="h-24 w-24">
-              {avatarPreview && <AvatarImage src={avatarPreview} alt="Avatar Preview" />}
+              {avatarPreview && <AvatarImage src={avatarPreview || "/placeholder.svg"} alt="Avatar Preview" />}
               <AvatarFallback className="bg-muted">
                 <Camera className="h-8 w-8 text-muted-foreground" />
               </AvatarFallback>
@@ -122,7 +151,9 @@ export function AddUserDialog({
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={handleCancel}>Cancel</Button>
+          <Button variant="outline" onClick={handleCancel}>
+            Cancel
+          </Button>
           <Button onClick={handleSave} disabled={saving}>
             {saving ? "Saving..." : "Save"}
           </Button>
@@ -131,3 +162,5 @@ export function AddUserDialog({
     </Dialog>
   )
 }
+
+export default AddUserDialog
