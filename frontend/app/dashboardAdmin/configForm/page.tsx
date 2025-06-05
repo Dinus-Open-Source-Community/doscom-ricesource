@@ -1,11 +1,25 @@
 'use client'
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { DataTable } from '@/components/admin/config-table/data-table';
 import { columns } from '@/components/admin/config-table/columns';
-import { users } from '@/components/admin/data/users';
+import { ConfigForAdmin, fetchConfigForAdmin } from '@/actions/configForAdmin';
 
 
 export default function FormsTable() {
+  const [config, setConfig] = useState<ConfigForAdmin[]>([]);
+
+  useEffect(() => {
+  async function getConfig() {
+    try {
+      const res = await fetchConfigForAdmin();
+      setConfig(res.data);
+    } catch (error) {
+      console.error('Failed to fetch config data:', error);
+    }
+  }
+  getConfig();
+}, []);
+
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
@@ -14,8 +28,7 @@ export default function FormsTable() {
         <div className="aspect-video rounded-xl bg-blue-100" />
         <div className="aspect-video rounded-xl bg-blue-100" />
       </div>
-      {/* <ConfigDataTable /> */}
-      <DataTable columns={columns} data={users} />
+      <DataTable columns={columns} data={config} />
     </div>
   );
 };

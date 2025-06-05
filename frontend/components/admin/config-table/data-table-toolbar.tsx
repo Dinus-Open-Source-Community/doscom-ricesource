@@ -22,9 +22,9 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
       {/* Search & Filter */}
       <div className="flex flex-1 items-center space-x-2">
         <Input
-          placeholder="Search by name, email..."
-          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-          onChange={(event) => table.getColumn("name")?.setFilterValue(event.target.value)}
+          placeholder="Search by judul"
+          value={(table.getColumn("judul")?.getFilterValue() as string) ?? ""}
+          onChange={(event) => table.getColumn("judul")?.setFilterValue(event.target.value)}
           className="h-9 w-full sm:max-w-[300px]"
         />
         {isFiltered && (
@@ -39,7 +39,7 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
       <div className="flex items-center space-x-2">
         <Button variant="default" size="sm" className="h-9" onClick={() => setShowAddModal(true)}>
           <Plus className="mr-2 h-4 w-4" />
-          Add User
+          Add Config
         </Button>
 
         {selectedRows.length > 0 && (
@@ -47,17 +47,6 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
             <Button variant="outline" size="sm" className="h-9" onClick={() => setShowBulkDeleteDialog(true)}>
               <Trash className="mr-2 h-4 w-4" />
               Delete ({selectedRows.length})
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-9"
-              onClick={() => {
-                console.log("Export selected rows", selectedRows)
-              }}
-            >
-              <Download className="mr-2 h-4 w-4" />
-              Export
             </Button>
           </>
         )}

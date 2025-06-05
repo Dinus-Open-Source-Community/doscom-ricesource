@@ -12,11 +12,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { ArrowUpDown, MoreHorizontal, Pencil, Trash } from "lucide-react"
-import type { User } from "@/components/admin/data/users"
-import { DeleteConfirmationDialog } from "./delete-confirmation-dialog"
 import * as React from "react"
+import { DeleteConfirmationDialog } from "./delete-confirmation-dialog"
+import { ConfigForAdmin } from "@/actions/configForAdmin"
 
-export const columns: ColumnDef<User>[] = [
+export const columns: ColumnDef<ConfigForAdmin>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -42,38 +42,103 @@ export const columns: ColumnDef<User>[] = [
     cell: ({ row }) => <div className="w-[80px]">{row.getValue("id")}</div>,
   },
   {
-    accessorKey: "name",
-    header: ({ column }) => {
-      return (
-        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Name
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
-    cell: ({ row }) => <div>{row.getValue("name")}</div>,
+    accessorKey: "judul",
+    header: ({ column }) => (
+      <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        Judul
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+    cell: ({ row }) => <div>{row.getValue("judul")}</div>,
   },
   {
-    accessorKey: "email",
-    header: ({ column }) => {
-      return (
-        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Email
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
-    cell: ({ row }) => <div>{row.getValue("email")}</div>,
+    accessorKey: "description",
+    header: "Deskripsi",
+    cell: ({ row }) => <div>{row.getValue("description")}</div>,
   },
   {
-    accessorKey: "role",
-    header: "Role",
-    cell: ({ row }) => <div>{row.getValue("role")}</div>,
+    accessorKey: "like",
+    header: "Likes",
+    cell: ({ row }) => <div>{row.getValue("like")}</div>,
+  },
+  {
+    accessorKey: "distro",
+    header: "Distro",
+    cell: ({ row }) => <div>{row.getValue("distro")}</div>,
+  },
+  {
+    accessorKey: "desktop_environment",
+    header: "Desktop",
+    cell: ({ row }) => <div>{row.getValue("desktop_environment")}</div>,
+  },
+  {
+    accessorKey: "widowss_manager",
+    header: "WM",
+    cell: ({ row }) => <div>{row.getValue("widowss_manager")}</div>,
+  },
+  {
+    accessorKey: "terminal",
+    header: "Terminal",
+    cell: ({ row }) => <div>{row.getValue("terminal")}</div>,
+  },
+  {
+    accessorKey: "shell",
+    header: "Shell",
+    cell: ({ row }) => <div>{row.getValue("shell")}</div>,
+  },
+  {
+    accessorKey: "author",
+    header: "Author",
+    cell: ({ row }) => <div>{row.getValue("author")}</div>,
+  },
+  {
+    accessorKey: "image_url",
+    header: "Gambar",
+    cell: ({ row }) => {
+      let urls: string[] = []
+
+      try {
+        const raw = row.getValue("image_url")
+        if (typeof raw === "string") {
+          urls = JSON.parse(raw)
+        }
+      } catch (e) {
+        console.error("Failed to parse image_url", e)
+      }
+
+      const image = urls[0] || ""
+
+      return image ? (
+        <img
+          src={image}
+          alt="Config"
+          className="h-10 w-10 object-cover rounded-md"
+        />
+      ) : (
+        <span className="text-muted-foreground">No image</span>
+      )
+    },
+  },
+
+
+  {
+    accessorKey: "github",
+    header: "GitHub",
+    cell: ({ row }) => (
+      <a
+        href={row.getValue("github")}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-blue-600 underline"
+      >
+        Link
+      </a>
+    ),
   },
   {
     id: "actions",
     cell: ({ row }) => {
-      const user = row.original
+      const config = row.original
       const [showDeleteDialog, setShowDeleteDialog] = React.useState(false)
 
       return (
@@ -87,9 +152,6 @@ export const columns: ColumnDef<User>[] = [
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              {/* <DropdownMenuItem onClick={() => navigator.clipboard.writeText(user.id.toString())}>
-                Copy user ID
-              </DropdownMenuItem> */}
               <DropdownMenuSeparator />
               <DropdownMenuItem>
                 <Pencil className="mr-2 h-4 w-4" />
@@ -106,12 +168,12 @@ export const columns: ColumnDef<User>[] = [
             isOpen={showDeleteDialog}
             onClose={() => setShowDeleteDialog(false)}
             onConfirm={() => {
-              console.log("Deleting user:", user)
+              console.log("Deleting config:", config)
               setShowDeleteDialog(false)
-              // Here you would call your delete API
+              // Place your delete API call here if needed.
             }}
-            title="Delete User"
-            description={`Are you sure you want to delete ${user.name}? This action cannot be undone.`}
+            title="Delete Config"
+            description={`Are you sure you want to delete ${config.judul}? This action cannot be undone.`}
           />
         </>
       )
