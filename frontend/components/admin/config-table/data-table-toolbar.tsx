@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { X, Trash, Download, Plus } from "lucide-react"
 import { DeleteConfirmationDialog } from "./delete-confirmation-dialog"
-import { AddUserDialog } from "@/components/admin/config-table/addUserDialog"
+import { AddUserDialog } from "@/components/admin/config-table/addConfigDialog"
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>

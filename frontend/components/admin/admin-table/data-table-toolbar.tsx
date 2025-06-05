@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { X, Trash, Download, Plus } from "lucide-react"
 import { DeleteConfirmationDialog } from "./delete-confirmation-dialog"
-import { AddUserDialog } from "./addUserDialog"
+import { AddUserDialog } from "./addAdminDialog"
 import { fetchAdminData, adminRegister, Admin } from '@/actions/authAdmin';
 
 
