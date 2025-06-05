@@ -1,4 +1,5 @@
 import axios from "axios";
+import { File } from "buffer";
 
 const URL = process.env.NEXT_PUBLIC_API_URL; 
 
@@ -7,7 +8,7 @@ export interface UserbyAdmin {
     username: string;
     email: string;
     password: string;
-    avatar: string;
+    avatar: File | string;
   }
 
 
@@ -40,7 +41,7 @@ export async function deleteUserByAdmin(id: number) {
     return response.data
 }
 
-export async function createUserByAdmin(data: UserbyAdmin) {
+export async function createUserByAdmin(data: FormData) {
     const token = localStorage.getItem('token');
     if (!token) {
         console.error('No token found in localStorage');
