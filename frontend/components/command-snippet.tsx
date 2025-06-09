@@ -6,21 +6,14 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import MDEditor from "@uiw/react-md-editor";
 
 interface CommandSnippetProps {
-  title: string;
-  description: string;
   command: string; // Command bisa berupa string multi-line
 }
 
 export function CommandSnippet({
-  title,
-  description,
   command,
 }: CommandSnippetProps) {
   const [isCopied, setIsCopied] = useState(false);
@@ -37,13 +30,8 @@ export function CommandSnippet({
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
-      </CardHeader>
       <CardContent>
         <div className="bg-muted rounded-md font-mono text-sm relative" data-color-mode="light">
-          {/* Gunakan <pre> dan <code> untuk menampilkan teks multi-line */}
           <MDEditor.Markdown source={command} className="mde-reset" style={{ padding: "20px", backgroundColor: "whitesmoke" }} />
           <Button
             variant="ghost"

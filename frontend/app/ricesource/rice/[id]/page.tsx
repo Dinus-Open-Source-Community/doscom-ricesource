@@ -139,8 +139,6 @@ export default async function RiceDetailPage({
       <div className="mt-8 space-y-4">
         <h2 className="text-2xl font-bold">Installation Commands</h2>
         <CommandSnippet
-          title="Update and Clean System"
-          description="Commands to update and clean your system."
           command={rice.snippets ? rice.snippets : "nothing"}
         />
       </div>
