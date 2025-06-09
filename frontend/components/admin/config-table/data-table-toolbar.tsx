@@ -19,7 +19,6 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
 
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-      {/* Search & Filter */}
       <div className="flex flex-1 items-center space-x-2">
         <Input
           placeholder="Search by judul"
@@ -35,7 +34,6 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
         )}
       </div>
 
-      {/* Action Buttons */}
       <div className="flex items-center space-x-2">
         <Button variant="default" size="sm" className="h-9" onClick={() => setShowAddModal(true)}>
           <Plus className="mr-2 h-4 w-4" />
@@ -52,7 +50,6 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
         )}
       </div>
 
-      {/* Delete Modal */}
       <DeleteConfirmationDialog
         isOpen={showBulkDeleteDialog}
         onClose={() => setShowBulkDeleteDialog(false)}
@@ -65,13 +62,11 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
         description={`Are you sure you want to delete ${selectedRows.length} selected users? This action cannot be undone.`}
       />
 
-      {/* Add User Modal */}
       <AddUserDialog
         open={showAddModal}
         onOpenChange={setShowAddModal}
         onSubmit={(data) => {
           console.log("New user:", data)
-          // TODO: Tambahkan API call di sini
         }}
       />
     </div>

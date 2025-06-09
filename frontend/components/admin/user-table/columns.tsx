@@ -143,7 +143,7 @@ export const createColumns = (onUserDeleted?: () => void): ColumnDef<UserbyAdmin
 
           toast.error("Failed to delete user", {
             description: errorMessage,
-            duration: 7000, // Show error longer
+            duration: 7000, 
           })
         } finally {
           setIsDeleting(false)

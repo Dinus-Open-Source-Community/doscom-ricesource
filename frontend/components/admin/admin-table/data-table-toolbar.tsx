@@ -60,7 +60,7 @@ export function DataTableToolbar<TData>({ table, onAdminAdded }: DataTableToolba
       {/* Search & Filter */}
       <div className="flex flex-1 items-center space-x-2">
         <Input
-          placeholder="Search by name, email..."
+          placeholder="Search by username"
           value={(table.getColumn("username")?.getFilterValue() as string) ?? ""}
           onChange={(event) => table.getColumn("username")?.setFilterValue(event.target.value)}
           className="h-9 w-full sm:max-w-[300px]"

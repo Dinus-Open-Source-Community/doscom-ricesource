@@ -14,7 +14,8 @@ import {
 import { ArrowUpDown, MoreHorizontal, Pencil, Trash } from "lucide-react"
 import * as React from "react"
 import { DeleteConfirmationDialog } from "./delete-confirmation-dialog"
-import { ConfigForAdmin } from "@/actions/configForAdmin"
+import { ConfigForAdmin, deleteConfigForAdmin } from "@/actions/configForAdmin"
+import { toast } from "sonner"
 
 export const columns: ColumnDef<ConfigForAdmin>[] = [
   {
@@ -135,11 +136,55 @@ export const columns: ColumnDef<ConfigForAdmin>[] = [
       </a>
     ),
   },
+  
   {
     id: "actions",
     cell: ({ row }) => {
       const config = row.original
       const [showDeleteDialog, setShowDeleteDialog] = React.useState(false)
+      const [isDelete, setIsDelete] = React.useState(false)
+
+      const handleDeleteConfig = async () => {
+        if (isDelete) return
+
+        if (!config.id) {
+          toast.error("Invalid config data", {
+            description: "Config ID is required for deletion",
+          });
+          return
+        }
+        setIsDelete(true)
+
+        try {
+          console.log("attempting to delete config:", {
+            id: config.id,
+            judul: config.judul,
+            description: config.description,
+          })
+
+          await deleteConfigForAdmin(config.id)
+
+          toast.success("Config deleted successfully", {
+            description: `${config.judul} (ID: ${config.id}) has been deleted.`,
+          })
+        } catch (error) {
+          console.log("failed to delete config:", error)
+
+          let errorMessage = "Failed to delete config. Please try again."
+
+          if (error instanceof Error) {
+            errorMessage = error.message 
+          }
+
+          toast.error("Failed to delete config", {
+            description: errorMessage,
+            duration: 7000,
+          })
+        } finally {
+          setIsDelete(false)
+          setShowDeleteDialog(false)
+        }
+      }
 
       return (
         <>
@@ -167,11 +212,7 @@ export const columns: ColumnDef<ConfigForAdmin>[] = [
           <DeleteConfirmationDialog
             isOpen={showDeleteDialog}
             onClose={() => setShowDeleteDialog(false)}
-            onConfirm={() => {
-              console.log("Deleting config:", config)
-              setShowDeleteDialog(false)
-              // Place your delete API call here if needed.
-            }}
+            onConfirm={() => handleDeleteConfig()}
             title="Delete Config"
             description={`Are you sure you want to delete ${config.judul}? This action cannot be undone.`}
           />
