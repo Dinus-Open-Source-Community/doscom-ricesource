@@ -8,15 +8,15 @@ import { X, Trash, Plus } from "lucide-react"
 import { DeleteConfirmationDialog } from "./delete-confirmation-dialog"
 import { AddConfigDialog } from "@/components/admin/config-table/addConfigDialog"
 import { toast } from "sonner"
+import { type CreateConfigData, storeConfigForAdmin, deleteConfigForAdmin } from "@/actions/configForAdmin"
 
-import { type Config, type CreateConfigData, storeConfigForAdmin, deleteConfigForAdmin } from "@/actions/configForAdmin"
-
-interface DataTableToolbarProps<TData> {
+// Batasan (constraint) TData diubah agar lebih umum, hanya membutuhkan properti 'id'.
+interface DataTableToolbarProps<TData extends { id: number | string }> {
   table: Table<TData>
   refetchData: () => void
 }
 
-export function DataTableToolbar<TData extends Config>({ table, refetchData }: DataTableToolbarProps<TData>) {
+export function DataTableToolbar<TData extends { id: number | string }>({ table, refetchData }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0
   const selectedRows = table.getFilteredSelectedRowModel().rows
 
@@ -30,7 +30,7 @@ export function DataTableToolbar<TData extends Config>({ table, refetchData }: D
     setIsSubmitting(true)
 
     try {
-      // Validate required fields
+      // Validasi field yang wajib diisi
       const requiredFields = [
         "judul",
         "description",
@@ -49,7 +49,7 @@ export function DataTableToolbar<TData extends Config>({ table, refetchData }: D
         }
       }
 
-      // Validate file
+      // Validasi file gambar
       const images = formData.get("images") as File
       if (!images || !(images instanceof File) || images.size === 0) {
         throw new Error("A valid image file is required")
@@ -64,7 +64,7 @@ export function DataTableToolbar<TData extends Config>({ table, refetchData }: D
         throw new Error("Image file size must be less than 5MB")
       }
 
-      // Create config object
+      // Membuat objek config dari FormData
       const config: CreateConfigData = {
         judul: (formData.get("judul") as string).trim(),
         description: (formData.get("description") as string).trim(),
@@ -77,7 +77,7 @@ export function DataTableToolbar<TData extends Config>({ table, refetchData }: D
         shell: (formData.get("shell") as string).trim(),
       }
 
-      // Validate GitHub URL
+      // Validasi URL GitHub
       if (!config.github.startsWith("http")) {
         throw new Error("GitHub URL must start with http:// or https://")
       }
@@ -111,7 +111,7 @@ export function DataTableToolbar<TData extends Config>({ table, refetchData }: D
     const idsToDelete = rowsToDelete.map((row) => row.original.id)
 
     try {
-      await Promise.all(idsToDelete.map((id) => deleteConfigForAdmin(id)))
+      await Promise.all(idsToDelete.map((id) => deleteConfigForAdmin(Number(id))))
 
       toast.success("Configurations deleted successfully!", {
         description: `${idsToDelete.length} configurations have been deleted.`,

@@ -12,10 +12,12 @@ import axios from "axios"
 export default function ProfileSettings() {
   const [username, setUsername] = useState("")
   const [email, setEmail] = useState("")
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false) // State untuk fetch
+  const [saving, setSaving] = useState(false) // State khusus untuk save
 
   useEffect(() => {
     const fetchProfile = async () => {
+      setLoading(true); // Mulai loading
       try {
         const profileData = await getProfileData();
         setUsername(profileData.username);
@@ -23,6 +25,8 @@ export default function ProfileSettings() {
       } catch (error) {
         console.error(error);
         alert("Failed to fetch profile data.");
+      } finally {
+        setLoading(false); // Selesai loading
       }
     };
 
@@ -30,14 +34,32 @@ export default function ProfileSettings() {
   }, []);
 
   const handleSaveChanges = async () => {
+    setSaving(true); // Mulai proses saving
     try {
       await updateProfile({ username, email });
       alert("Profile updated!");
     } catch (error) {
       console.error(error);
       alert("Failed to update profile.");
+    } finally {
+      setSaving(false); // Selesai proses saving
     }
   };
+
+  // Tampilkan pesan loading jika data belum siap
+  if (loading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Profile</CardTitle>
+          <CardDescription>Update your profile information.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p>Loading profile...</p>
+        </CardContent>
+      </Card>
+    )
+  }
 
   return (
     <Card>
@@ -76,8 +98,8 @@ export default function ProfileSettings() {
         </div>
       </CardContent>
       <CardFooter className="flex justify-end">
-        <Button onClick={handleSaveChanges} disabled={loading}>
-          {loading ? "Saving..." : "Save Changes"}
+        <Button onClick={handleSaveChanges} disabled={saving}>
+          {saving ? "Saving..." : "Save Changes"}
         </Button>
       </CardFooter>
     </Card>

@@ -15,16 +15,24 @@ import {
 } from "@tanstack/react-table"
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-
 import { DataTablePagination } from "./data-table-pagination"
 import { DataTableToolbar } from "./data-table-toolbar"
+// Hapus import 'Config' yang tidak lagi dibutuhkan
+// import { type Config } from "@/actions/configForAdmin"
 
-interface DataTableProps<TData, TValue> {
+// Ubah batasan TData agar lebih umum
+interface DataTableProps<TData extends { id: number | string }, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+  refetchData: () => void
 }
 
-export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
+// Gunakan batasan baru di sini
+export function DataTable<TData extends { id: number | string }, TValue>({
+  columns,
+  data,
+  refetchData,
+}: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
@@ -52,7 +60,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
 
   return (
     <div className="space-y-4">
-      <DataTableToolbar table={table} />
+      <DataTableToolbar table={table} refetchData={refetchData} />
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -91,4 +99,3 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
     </div>
   )
 }
-
