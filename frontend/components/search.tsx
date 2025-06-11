@@ -24,7 +24,7 @@ export default function Search({ onSearch }: SearchProps) {
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
-      <Button type="submit">Search</Button>
+      <Button className="bg-emerald-600" type="submit">Search</Button>
     </form>
   );
 }
