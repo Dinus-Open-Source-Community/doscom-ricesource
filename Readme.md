@@ -3,6 +3,7 @@
 A community-driven platform for Linux desktop customization enthusiasts.
 
 ## 📝 Table of Contents
+
 - [Description](#description)
 - [Features](#key-features)
 - [Tech Stack](#tech-stack)
@@ -25,15 +26,15 @@ Ricesource is a beautifully crafted web application designed for Linux enthusias
 
 ## 💻 Tech Stack
 
-- **Backend**: 
+- **Backend**:
   - Node.js
   - Express.js
   - Supabase (Database)
-- **Frontend**: 
+- **Frontend**:
   - [To be specified]
-- **Authentication**: 
+- **Authentication**:
   - JWT (JSON Web Tokens)
-- **Deployment**: 
+- **Deployment**:
   - [To be specified]
 
 ## 📋 Prerequisites
@@ -47,12 +48,14 @@ Before you begin, ensure you have met the following requirements:
 ## 🔧 Installation
 
 1. Clone the repository
+
    ```bash
    git clone https://github.com/your-username/ricesource.git
    cd ricesource
    ```
 
 2. Install backend dependencies
+
    ```bash
    cd Backend_3
    npm install
@@ -71,14 +74,10 @@ Before you begin, ensure you have met the following requirements:
 ### Backend
 
 1. Start the backend server in development mode (with hot-reload):
+
    ```bash
    cd Backend_3
-   npm run dev
-   ```
-   Or for production:
-   ```bash
-   cd Backend_3
-   npm start
+   node src/index.js
    ```
 
 2. The backend server will be available at `http://localhost:5000`
@@ -86,11 +85,13 @@ Before you begin, ensure you have met the following requirements:
 ### Frontend
 
 1. Navigate to the frontend directory:
+
    ```bash
    cd frontend
    ```
 
 2. Install dependencies and start the development server:
+
    ```bash
    npm install
    npm run dev
