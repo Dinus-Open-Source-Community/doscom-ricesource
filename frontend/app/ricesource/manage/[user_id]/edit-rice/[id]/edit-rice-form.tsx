@@ -49,6 +49,18 @@ export function EditRiceForm({ token, initialData, riceId }: EditRiceFormProps) 
         setRice(prev => ({ ...prev, [name]: value }))
     }
 
+    const handleFilesChange = (newFiles: (File | string)[]) => {
+        setFiles(newFiles);
+        // Update image_url in rice state
+        const imageUrls = newFiles.filter(file => typeof file === 'string');
+        setRice(prev => ({
+            ...prev,
+            image_url: JSON.stringify(imageUrls)
+        }));
+    };
+
+
+
     const handleSelectChange = (name: string, value: string) => {
         setRice(prev => ({ ...prev, [name]: value }))
     }
@@ -62,23 +74,23 @@ export function EditRiceForm({ token, initialData, riceId }: EditRiceFormProps) 
 
             // Append all rice data
             Object.entries(rice).forEach(([key, value]) => {
-                if (value !== undefined && value !== null) {
+                if (value !== undefined && value !== null && key !== 'image_url') {
                     formData.append(key, String(value))
                 }
             })
 
-            // Append existing URLs and new files
+            // Handle images properly
             const existingUrls = files.filter(file => typeof file === 'string')
-            formData.append('existing_images', JSON.stringify(existingUrls))
+            formData.append('image_url', JSON.stringify(existingUrls))
 
-            // Append new files
+            // Append new files only
             files.forEach(file => {
                 if (file instanceof File) {
                     formData.append('images', file)
                 }
             })
 
-            const response = await updateRice(riceId, formData, token)
+            await updateRice(riceId, formData, token)
 
             toast({
                 title: "Success",
@@ -186,7 +198,7 @@ export function EditRiceForm({ token, initialData, riceId }: EditRiceFormProps) 
                     <Label>Images</Label>
                     <ImageUpload
                         value={files}
-                        onChange={setFiles}
+                        onChange={handleFilesChange}
                         maxFiles={5}
                     />
                     <p className="text-sm text-muted-foreground">

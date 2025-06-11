@@ -15,25 +15,24 @@ export function ImageUpload({ value = [], onChange, maxFiles = 5 }: ImageUploadP
     const [isUploading, setIsUploading] = useState(false)
     const [previewUrls, setPreviewUrls] = useState<string[]>([])
 
-    // Create preview URLs and clean up
+    // Track object URLs to revoke them properly
     useEffect(() => {
         const urls: string[] = []
+        const objectUrls: string[] = []
+
         value.forEach(item => {
             if (typeof item === 'string') {
                 urls.push(item)
             } else {
-                urls.push(URL.createObjectURL(item))
+                const url = URL.createObjectURL(item)
+                urls.push(url)
+                objectUrls.push(url)
             }
         })
         setPreviewUrls(urls)
 
         return () => {
-            // Clean up object URLs
-            urls.forEach(url => {
-                if (url.startsWith('blob:')) {
-                    URL.revokeObjectURL(url)
-                }
-            })
+            objectUrls.forEach(url => URL.revokeObjectURL(url))
         }
     }, [value])
 
@@ -60,9 +59,8 @@ export function ImageUpload({ value = [], onChange, maxFiles = 5 }: ImageUploadP
         maxFiles: maxFiles - value.length
     })
 
-    const removeImage = (index: number) => {
-        const newFiles = [...value]
-        newFiles.splice(index, 1)
+    const removeImage = (indexToRemove: number) => {
+        const newFiles = value.filter((_, idx) => idx !== indexToRemove)
         onChange(newFiles)
     }
 
@@ -90,10 +88,10 @@ export function ImageUpload({ value = [], onChange, maxFiles = 5 }: ImageUploadP
                                 <p className="text-xs text-white truncate">
                                     {typeof value[index] === 'string'
                                         ? 'Uploaded image'
-                                        : (value[index] as File).name}
+                                        : value[index] ? (value[index] as File).name : ''}
                                 </p>
                                 <p className="text-xs text-white">
-                                    {typeof value[index] !== 'string'
+                                    {typeof value[index] !== 'string' && value[index]
                                         ? `${((value[index] as File).size / 1024).toFixed(1)} KB`
                                         : ''}
                                 </p>
