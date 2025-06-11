@@ -11,8 +11,24 @@ export default async function Home() {
 
   return (
     <main className="min-h-screen bg-background">
+      {/* Page Header */}
+      <section className="bg-gradient-to-r from-emerald-50 to-teal-50 border-b">
+        <div className="container mx-auto px-4 py-12">
+          <div className="text-center">
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">
+              Linux Ricing{" "}
+              <span className="bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+                Showcase
+              </span>
+            </h1>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Discover amazing Linux desktop customizations from our community
+            </p>
+          </div>
+        </div>
+      </section>
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-4xl font-bold mb-8">Linux Ricing Showcase</h1>
+
         <Suspense fallback={<div>Loading...</div>}>
           <RiceList initialRices={rices} token={token} />{" "}
           {/* Pass token as prop */}
