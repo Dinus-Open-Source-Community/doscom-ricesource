@@ -16,8 +16,8 @@ async function handleResponse(response: Response) {
 
 export async function getAllRices(): Promise<Rice[]> {
     try {
-        const response = await fetch(URL);
-        return await handleResponse(response);
+        const { data } = await axios(URL);
+        return await data.data || data;
     } catch (error) {
         console.error("Error fetching all rice configs:", error);
         throw error;
