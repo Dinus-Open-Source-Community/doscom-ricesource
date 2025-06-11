@@ -32,7 +32,7 @@ export default function RiceList({ initialRices, token }: RiceListProps) {
   const [bookmarkedRices, setBookmarkedRices] = useState<Set<number>>(
     new Set()
   );
-  const perPage = 4;
+  const perPage = 8;
 
   useEffect(() => {
     const fetchBookmarks = async () => {
