@@ -7,7 +7,7 @@ import multer from "multer";
 const storage = multer.memoryStorage();
 const upload = multer({
   storage,
-  limits: { fileSize: 1100 * 1024 }, // 800KB per file
+  limits: { fileSize: 5000 * 1024 }, // 800KB per file
 });
 
 // Fungsi untuk upload satu file dan mendapatkan URL publik
