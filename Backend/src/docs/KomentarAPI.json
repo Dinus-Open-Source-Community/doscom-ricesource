@@ -1,0 +1,150 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Komentar API Documentation",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000/api/"
+    }
+  ],
+  "components":{
+    "securitySchemes":{
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "Bearer",
+        "bearerFormat": "jwt"
+      }
+    }
+  },
+  "paths": {
+    "/komentar": {
+      "post": {
+        "tags": [
+          "default"
+        ],
+        "summary": "Create Komentar",
+        "security":[
+          {
+            "BearerAuth":[]
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "config_id": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "haloo"
+                  },
+                  "parent_id":{
+                    "type": "integer",
+                    "example": null
+                  }
+                },
+                "required": ["config_id, description"]
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "application/json"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "default"
+        ],
+        "summary": "Get All Komentar",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/komentar/{config_id}": {
+      "get": {
+        "tags": [
+          "default"
+        ],
+        "summary": "Get Komentar by Config ID",
+        "parameters":[
+          {
+            "name": "config_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/komentar/{id}": {
+      "delete": {
+        "tags": [
+          "default"
+        ],
+        "summary": "Delete Komentar",
+        "security":[
+          {
+            "BearerAuth":[]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    }
+  }
+}

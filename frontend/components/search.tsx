@@ -1,17 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-export default function Search() {
+interface SearchProps {
+  onSearch: (value: string) => void;
+}
+
+export default function Search({ onSearch }: SearchProps) {
   const [searchTerm, setSearchTerm] = useState("");
-  const router = useRouter();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    router.push(`/?search=${encodeURIComponent(searchTerm)}`);
+    onSearch(searchTerm);
   };
 
   return (
@@ -22,7 +24,7 @@ export default function Search() {
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
-      <Button type="submit">Search</Button>
+      <Button className="bg-emerald-600 hover:bg-emerald-900" type="submit">Search</Button>
     </form>
   );
 }

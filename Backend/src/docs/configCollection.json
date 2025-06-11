@@ -1,0 +1,277 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Config Routes Collection",
+    "description": "Collection untuk testing endpoint config (GET, POST, PUT, DELETE). Pastikan variabel {{token}} diisi dengan token JWT yang valid.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000"
+    }
+  ],
+  "components":{
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "Bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "paths": {
+    "/api/configs": {
+      "get": {
+        "tags": [
+          "default"
+        ],
+        "summary": "Get All Configs",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "default"
+        ],
+        "summary": "Create Config",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "judul": {
+                    "type": "string",
+                    "example": "Contoh Judul"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Deskripsi config contoh."
+                  },
+                  "github": {
+                    "type": "string",
+                    "example": "https://github.com/contoh/repo"
+                  },
+                  "desktop_environment": {
+                    "type": "string",
+                    "example": "GNOME"
+                  },
+                  "windows_manager": {
+                    "type": "string",
+                    "example": "i3"
+                  },
+                  "distro": {
+                    "type": "string",
+                    "example": "Ubuntu"
+                  },
+                  "terminal": {
+                    "type": "string",
+                    "example": "GNOME Terminal"
+                  },
+                  "shell": {
+                    "type": "string",
+                    "example": "bash"
+                  },
+                  "author": {
+                    "type": "string",
+                    "example": "Nama Author"
+                  },
+                  "images": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer {{token}}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/configs/{id}": {
+      "get": {
+        "tags": [
+          "default"
+        ],
+        "summary": "Get Config By ID",
+        "parameters":[
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "default"
+        ],
+        "summary": "Update Config",
+        "security":[
+          {
+            "BearerAuth":[]
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "judul": {
+                    "type": "string",
+                    "example": "Judul Update"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Deskripsi update config."
+                  },
+                  "github": {
+                    "type": "string",
+                    "example": "https://github.com/contoh/repo-update"
+                  },
+                  "desktop_environment": {
+                    "type": "string",
+                    "example": "KDE"
+                  },
+                  "windows_manager": {
+                    "type": "string",
+                    "example": "Openbox"
+                  },
+                  "distro": {
+                    "type": "string",
+                    "example": "Fedora"
+                  },
+                  "terminal": {
+                    "type": "string",
+                    "example": "Konsole"
+                  },
+                  "shell": {
+                    "type": "string",
+                    "example": "zsh"
+                  },
+                  "author": {
+                    "type": "string",
+                    "example": "Nama Author Update"
+                  },
+                  "images": {
+                    "type": "string",
+                    "items": {
+                      "type": "string",
+                      "format": "binary"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "example": 1
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer {{token}}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "default"
+        ],
+        "summary": "Delete Config",
+        "security":[
+          {
+            "BearerAuth":[]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "example": 1
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer {{token}}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    }
+  }
+}
