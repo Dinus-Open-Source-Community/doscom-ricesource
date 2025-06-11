@@ -206,6 +206,7 @@ class ConfigController {
           shell,
           author,
           snippets,
+          image_url, // Tambahkan ini untuk menerima image_url yang sudah diupdate dari frontend
         } = req.body;
 
         // Cek dulu apakah config ini dimiliki oleh user yang sedang login
@@ -230,6 +231,40 @@ class ConfigController {
 
         console.log("data lama: ", existingConfig);
 
+        // Parse image_url dari request body (yang sudah diupdate di frontend)
+        let validImageUrls = [];
+        try {
+          validImageUrls = image_url ? JSON.parse(image_url) : [];
+        } catch (e) {
+          console.error("Error parsing image_url:", e);
+          validImageUrls = existingConfig.image_url
+            ? JSON.parse(existingConfig.image_url)
+            : [];
+        }
+
+        // Jika ada file baru diupload, tambahkan ke validImageUrls
+        if (req.files && req.files.length > 0) {
+          if (req.files.length > 5) {
+            return res.status(400).json({
+              success: false,
+              message: "Maksimal 5 gambar diperbolehkan.",
+            });
+          }
+
+          // Upload tiap file baru
+          const uploadImages = await Promise.all(
+            req.files.map((file) => uploadImage(file))
+          );
+
+          // Gabungkan dengan URL yang valid dari frontend
+          validImageUrls = [...validImageUrls, ...uploadImages];
+
+          // Pastikan tidak melebihi 5 gambar
+          if (validImageUrls.length > 5) {
+            validImageUrls = validImageUrls.slice(0, 5);
+          }
+        }
+
         const updateData = {
           judul: judul || existingConfig.judul,
           description: description || existingConfig.description,
@@ -243,28 +278,8 @@ class ConfigController {
           shell: shell || existingConfig.shell,
           author: author || existingConfig.author,
           snippets: snippets || existingConfig.snippets,
+          image_url: JSON.stringify(validImageUrls), // Gunakan yang sudah diproses
         };
-
-        let imageUrls = existingConfig.image_url
-          ? JSON.parse(existingConfig.image_url)
-          : [];
-
-        if (req.files && req.files.length > 0) {
-          if (req.files.length > 5) {
-            return res.status(400).json({
-              success: false,
-              message: "Maksimal 5 gambar diperbolehkan.",
-            });
-          }
-
-          // Upload tiap file secara paralel dan ganti imageUrls
-          const uploadImages = await Promise.all(
-            req.files.map((file) => uploadImage(file))
-          );
-          imageUrls = [...imageUrls, ...uploadImages];
-
-          updateData.image_url = JSON.stringify(imageUrls);
-        }
 
         console.log("data update: ", updateData);
 
@@ -275,6 +290,10 @@ class ConfigController {
           .single();
 
         if (error) throw error;
+
+        // OPTIONAL: Bersihkan gambar yang tidak lagi digunakan
+        // Anda bisa membandingkan dengan existingConfig.image_url
+        // dan menghapus file yang tidak ada di validImageUrls
 
         console.log("data setelah update: ", data);
         res.status(200).json({ success: true, data });

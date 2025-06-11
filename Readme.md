@@ -31,11 +31,9 @@ Ricesource is a beautifully crafted web application designed for Linux enthusias
   - Express.js
   - Supabase (Database)
 - **Frontend**:
-  - [To be specified]
+  - NextJS
 - **Authentication**:
   - JWT (JSON Web Tokens)
-- **Deployment**:
-  - [To be specified]
 
 ## 📋 Prerequisites
 
