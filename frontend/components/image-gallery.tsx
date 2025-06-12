@@ -29,12 +29,11 @@ export function ImageGallery({ images, alt }: ImageGalleryProps) {
         src={images[currentIndex] || "/placeholder.svg"}
         alt={`${alt} - Image ${currentIndex + 1}`}
         fill
-        className="object-cover rounded-lg"
+        className=" object-contain rounded-lg bg-black"
       />
       {images.length > 1 && (
         <>
           <Button
-            variant="outline"
             size="icon"
             className="absolute left-2 top-1/2 transform -translate-y-1/2"
             onClick={prevImage}
@@ -42,7 +41,6 @@ export function ImageGallery({ images, alt }: ImageGalleryProps) {
             <ChevronLeft className="h-4 w-4" />
           </Button>
           <Button
-            variant="outline"
             size="icon"
             className="absolute right-2 top-1/2 transform -translate-y-1/2"
             onClick={nextImage}
@@ -53,9 +51,8 @@ export function ImageGallery({ images, alt }: ImageGalleryProps) {
             {images.map((_, index) => (
               <div
                 key={index}
-                className={`h-2 w-2 rounded-full ${
-                  index === currentIndex ? "bg-white" : "bg-gray-400"
-                }`}
+                className={`h-2 w-2 rounded-full ${index === currentIndex ? "bg-white" : "bg-gray-400"
+                  }`}
               />
             ))}
           </div>
