@@ -59,12 +59,19 @@ Before you begin, ensure you have met the following requirements:
    npm install
    ```
 
-3. Set up environment variables
+3. Set up Backend environment variables
    Create a `.env` file in the `Backend_3` directory with the following variables:
+
    ```
    SUPABASE_URL=your_supabase_project_url
    SUPABASE_KEY=your_supabase_api_key
    JWT_SECRET=your_jwt_secret
+   ```
+
+4. Set up Frontend environment variables
+   Create a `.env.local` file in the `frontend` directory with the following variables:
+   ```
+   NEXT_PUBLIC_API_URL = your_backend_api_url
    ```
 
 ## 🏃 Running the Project
