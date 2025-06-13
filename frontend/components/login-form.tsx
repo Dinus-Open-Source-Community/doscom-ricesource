@@ -48,9 +48,9 @@ export function LoginForm() {
 
       // Jika login berhasil
       if (result.success) {
-        console.log("Login successful:", result.data);
 
         // Simpan data pengguna ke localStorage (jika diperlukan)
+        localStorage.setItem("token", result.data.token);
         localStorage.setItem("user", JSON.stringify(result.data.user));
 
         // Redirect ke halaman beranda

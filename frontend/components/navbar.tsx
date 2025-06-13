@@ -1,5 +1,5 @@
 "use client";
-
+import { useAuth } from "@/context/AuthContext";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -20,34 +20,41 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const pathname = usePathname();
 
+  // Use the AuthContext to get token and validation status
+  const { token, isLoading: authLoading } = useAuth();
+
   const fetchUserData = async () => {
+    // Only fetch user data if we have a valid token from AuthContext
+    if (!token) {
+      setUser(null);
+      setLoading(false);
+      return;
+    }
+
     const userString = localStorage.getItem("user");
     if (userString) {
       try {
-        const user = JSON.parse(userString);
-        console.log("Parsed user from localStorage:", user); // Debugging
-        if (user?.id) {
-          const response = await getUser(user.id);
-          console.log("Fetched user data from API:", response); // Debugging
+        const userData = JSON.parse(userString);
+        if (userData?.id) {
+          const response = await getUser(userData.id);
           if (response) {
             setUser(response);
           } else {
             setError("Failed to fetch user data");
+            setUser(null);
           }
         }
       } catch (error) {
-        console.error("Error fetching user data:", error); // Debugging
         setError("Failed to parse or fetch user data");
+        setUser(null);
       } finally {
         setLoading(false);
       }
     } else {
-      console.log("No user data found in localStorage"); // Debugging
-      setError("No user data found in localStorage");
+      setUser(null);
       setLoading(false);
     }
   };
@@ -55,26 +62,20 @@ export default function Navbar() {
   const handleLogout = async () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    setToken(null);
     setUser(null);
     await logout();
     window.location.reload();
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-
-    if (token) {
-      setToken(token);
+    // Wait for AuthProvider to finish validation
+    if (!authLoading) {
+      fetchUserData();
     }
+  }, [token, authLoading]);
 
-    fetchUserData();
-  }, []);
-
-  // Log user state changes
-  useEffect(() => {
-    console.log("User state updated:", user);
-  }, [user]);
+  // Show authenticated user elements only if token is valid and user exists
+  const showAuthenticatedElements = token && user && !authLoading;
 
   return (
     <nav className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50">
@@ -97,21 +98,21 @@ export default function Navbar() {
                 key={item.name}
                 href={item.href}
                 className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors ${pathname === item.href
-                    ? "border-emerald-600 text-emerald-600"
-                    : "border-transparent text-gray-600 hover:border-emerald-300 hover:text-emerald-600"
+                  ? "border-emerald-600 text-emerald-600"
+                  : "border-transparent text-gray-600 hover:border-emerald-300 hover:text-emerald-600"
                   }`}
               >
                 {item.name}
               </Link>
             ))}
 
-            {user ? (
+            {showAuthenticatedElements ? (
               <>
                 <Link
                   href="/ricesource/bookmark"
                   className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors ${pathname === "/ricesource/bookmark"
-                      ? "border-emerald-600 text-emerald-600"
-                      : "border-transparent text-gray-600 hover:border-emerald-300 hover:text-emerald-600"
+                    ? "border-emerald-600 text-emerald-600"
+                    : "border-transparent text-gray-600 hover:border-emerald-300 hover:text-emerald-600"
                     }`}
                 >
                   Bookmark
@@ -120,8 +121,8 @@ export default function Navbar() {
                 <Link
                   href={`/ricesource/manage/${user.id}`}
                   className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors ${pathname === "/ricesource/manage/" + user.id
-                      ? "border-emerald-600 text-emerald-600"
-                      : "border-transparent text-gray-600 hover:border-emerald-300 hover:text-emerald-600"
+                    ? "border-emerald-600 text-emerald-600"
+                    : "border-transparent text-gray-600 hover:border-emerald-300 hover:text-emerald-600"
                     }`}
                 >
                   Manage
@@ -184,8 +185,8 @@ export default function Navbar() {
                 key={item.name}
                 href={item.href}
                 className={`block pl-3 pr-4 py-2 border-l-4 text-base font-medium transition-colors ${pathname === item.href
-                    ? "bg-emerald-50 border-emerald-600 text-emerald-600"
-                    : "border-transparent text-gray-600 hover:bg-gray-50 hover:border-emerald-300 hover:text-emerald-600"
+                  ? "bg-emerald-50 border-emerald-600 text-emerald-600"
+                  : "border-transparent text-gray-600 hover:bg-gray-50 hover:border-emerald-300 hover:text-emerald-600"
                   }`}
                 onClick={() => setIsOpen(false)}
               >
@@ -193,13 +194,13 @@ export default function Navbar() {
               </Link>
             ))}
 
-            {user && (
+            {showAuthenticatedElements ? (
               <>
                 <Link
                   href="/ricesource/bookmark"
                   className={`block pl-3 pr-4 py-2 border-l-4 text-base font-medium transition-colors ${pathname === "/ricesource/bookmark"
-                      ? "bg-emerald-50 border-emerald-600 text-emerald-600"
-                      : "border-transparent text-gray-600 hover:bg-gray-50 hover:border-emerald-300 hover:text-emerald-600"
+                    ? "bg-emerald-50 border-emerald-600 text-emerald-600"
+                    : "border-transparent text-gray-600 hover:bg-gray-50 hover:border-emerald-300 hover:text-emerald-600"
                     }`}
                   onClick={() => setIsOpen(false)}
                 >
@@ -209,8 +210,8 @@ export default function Navbar() {
                 <Link
                   href={`/ricesource/manage/${user.id}`}
                   className={`block pl-3 pr-4 py-2 border-l-4 text-base font-medium transition-colors ${pathname === "/ricesource/manage/" + user.id
-                      ? "bg-emerald-50 border-emerald-600 text-emerald-600"
-                      : "border-transparent text-gray-600 hover:bg-gray-50 hover:border-emerald-300 hover:text-emerald-600"
+                    ? "bg-emerald-50 border-emerald-600 text-emerald-600"
+                    : "border-transparent text-gray-600 hover:bg-gray-50 hover:border-emerald-300 hover:text-emerald-600"
                     }`}
                   onClick={() => setIsOpen(false)}
                 >
@@ -229,17 +230,15 @@ export default function Navbar() {
 
                 <button
                   onClick={() => {
-                    handleLogout?.()
-                    setIsOpen(false)
+                    handleLogout();
+                    setIsOpen(false);
                   }}
                   className="block w-full text-left pl-3 pr-4 py-2 border-l-4 text-base font-medium border-transparent text-gray-600 hover:bg-gray-50 hover:border-emerald-300 hover:text-emerald-600 transition-colors"
                 >
                   Logout
                 </button>
               </>
-            )}
-
-            {!user && (
+            ) : (
               <div className="flex flex-col space-y-2 p-3">
                 <Link href="/login" onClick={() => setIsOpen(false)}>
                   <Button
